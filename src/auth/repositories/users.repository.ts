@@ -1,11 +1,7 @@
-import {
-  Injectable,
-  ConflictException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Repository, DataSource } from 'typeorm';
-import { AuthCredentialsDto } from './dto/auth-credentials.dto';
-import { User } from './user.entity';
+import { AuthCredentialsDto } from '../dto/auth-credentials.dto';
+import { User } from '../entities/user.entity';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -25,10 +21,6 @@ export class UsersRepository extends Repository<User> {
 
       await this.save(user);
     } catch (e) {
-      const errors = { 23505: 'A user with the same username already exists' };
-
-      if (errors[e.code]) throw new ConflictException(errors[e.code]);
-
       throw new InternalServerErrorException();
     }
   }
