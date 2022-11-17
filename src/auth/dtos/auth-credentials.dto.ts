@@ -9,9 +9,6 @@ export class AuthCredentialsDto {
   @IsString()
   @MinLength(8)
   @MaxLength(32)
-  @Matches(new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])'), {
-    message:
-      'Password must contain at least 1 lowecase letter, 1 uppercase letter, 1 number and 1 special character',
-  })
+  @Matches(new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])'), { message: 'Password must contain at least 1 lowecase letter, 1 uppercase letter, 1 number and 1 special character' })
   password: string;
 }
