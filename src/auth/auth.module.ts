@@ -5,12 +5,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthController } from './controllers/auth.controller';
 import { AuthService } from './services/auth.service';
 import { JwtStrategy } from './jwt.strategy';
-import { UserModel } from './entities/user.entity';
-import { UsersRepository } from './repositories/users.repository';
+import { UserModel } from './models/user.model';
+import { UserRepository } from './repositories/user.repository';
+import { UserMongoRepository } from './repositories/user.mongo.repository';
 
 @Module({
   controllers: [AuthController],
-  providers: [UsersRepository, AuthService, JwtStrategy],
+  providers: [{ provide: UserRepository.name, useClass: UserMongoRepository }, AuthService, JwtStrategy],
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({ secret: `${process.env.JWT_SECRET}`, signOptions: { expiresIn: 3600 } }),

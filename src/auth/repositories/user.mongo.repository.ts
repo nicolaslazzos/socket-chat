@@ -2,17 +2,21 @@ import { Injectable, InternalServerErrorException, NotFoundException } from '@ne
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { AuthCredentialsDto } from '../dtos/auth-credentials.dto';
+import { UserDefinition } from '../models/user.model';
 import { User } from '../entities/user.entity';
 import * as bcrypt from 'bcrypt';
+import { UserRepository } from './user.repository';
 
 @Injectable()
-export class UsersRepository {
+export class UserMongoRepository extends UserRepository {
   constructor(
-    @InjectModel(User.name)
-    private readonly userModel: Model<User>
-  ) { }
+    @InjectModel(UserDefinition.name)
+    private readonly userModel: Model<UserDefinition>
+  ) {
+    super();
+  }
 
-  async createUser(dto: AuthCredentialsDto): Promise<void> {
+  async create(dto: AuthCredentialsDto): Promise<void> {
     try {
       const { username, password } = dto;
 
@@ -30,6 +34,6 @@ export class UsersRepository {
 
     if (!user) throw new NotFoundException();
 
-    return user;
+    return user.toEntity();
   }
 }

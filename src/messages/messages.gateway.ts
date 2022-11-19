@@ -12,7 +12,7 @@ import { MessageDto } from './dto/message.dto';
 
 @WebSocketGateway()
 export class MessagesGateway {
-  constructor(@Inject(CACHE_MANAGER) private cacheService: Cache) {}
+  constructor(@Inject(CACHE_MANAGER) private cacheService: Cache) { }
 
   @WebSocketServer()
   server: Server;
@@ -24,13 +24,11 @@ export class MessagesGateway {
   ) {
     await this.cacheService.set(
       `client:${message.user}`,
-      {
-        socket: client.id,
-      },
+      { socket: client.id },
       { ttl: 0 },
     );
 
-    const to = await this.cacheService.get<{ socket: string }>(
+    const to = await this.cacheService.get<{ socket: string; }>(
       `client:${message.to}`,
     );
 
