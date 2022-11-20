@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { Model, Query } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { ChatRepository } from './chat.repository';
 import { Chat as ChatModel } from '../models/chat.model';
@@ -21,8 +21,12 @@ export class ChatMongoRepository extends ChatRepository {
     return chat.toEntity();
   }
 
-  async findById(id: string): Promise<Chat> {
-    const chat = await this.chatModel.findById(id).populate('users', 'username').populate('creator', 'username');
+  async findById(id: string, populate?: boolean): Promise<Chat> {
+    let query: Query<ChatModel, ChatModel> = this.chatModel.findById(id);
+
+    if (populate !== false) query = query.populate('users', 'username').populate('creator', 'username');
+
+    const chat = await query;
 
     return chat.toEntity();
   }

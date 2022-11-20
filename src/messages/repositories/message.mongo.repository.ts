@@ -26,4 +26,10 @@ export class MessageMongoRepository extends MessageRepository {
 
     return messages.map((message) => message.toEntity());
   }
+
+  async findByChat(chat: string): Promise<Message[]> {
+    const messages = await this.messageModel.find({ chat }).populate('user', 'username');
+
+    return messages.map((message) => message.toEntity());
+  }
 }

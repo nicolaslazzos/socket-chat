@@ -11,7 +11,6 @@ import { Cache } from 'cache-manager';
 import { CreateMessageDto } from './dtos/create-message.dto';
 import { MessageRepository } from './repositories/message.repository';
 import { ChatRepository } from '../chats/repositories/chat.repository';
-import { User } from '../auth/entities/user.entity';
 
 @WebSocketGateway()
 export class MessagesGateway {
@@ -24,31 +23,24 @@ export class MessagesGateway {
   @WebSocketServer()
   server: Server;
 
+  @SubscribeMessage('connection')
+  async handleConnect(@MessageBody('user') user: string, @ConnectedSocket() client: Socket) {
+    client.join(user);
+  }
+
   @SubscribeMessage('message')
-  async handleMessage(
-    @MessageBody() dto: CreateMessageDto,
-    @ConnectedSocket() client: Socket,
-  ) {
+  async handleMessage(@MessageBody() dto: CreateMessageDto) {
     const message = await this.messageRepository.create(dto);
 
-    await this.cacheService.set(
-      `client:${message.user}`,
-      { socket: client.id },
-      { ttl: 0 },
-    );
+    const chat = await this.chatRepository.findById(message.chat, false);
 
-    const chat = await this.chatRepository.findById(message.chat as string);
+    this.server.to(chat.users as string[]).emit('response', message);
+  }
 
-    (chat.users as User[]).forEach(async (user: User) => {
-      const to = await this.cacheService.get<{ socket: string; }>(
-        `client:${user.id}`,
-      );
+  @SubscribeMessage('get_messages')
+  async handleGetMessages(@MessageBody('chat') chat: string, @ConnectedSocket() client: Socket) {
+    const messages = await this.messageRepository.findByChat(chat);
 
-      console.log(to);
-
-      if (to?.socket) {
-        this.server.sockets.to(to?.socket).emit('response', message);
-      }
-    });
+    this.server.to(client.id).emit('messages', messages);
   }
 }
