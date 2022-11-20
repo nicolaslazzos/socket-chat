@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { AuthCredentialsDto } from '../dtos/auth-credentials.dto';
 import { UserRepository } from '../repositories/user.repository';
 import { JwtPayload } from '../jwt-payload.interface';
+import { User } from '../entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -12,8 +13,8 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) { }
 
-  async signUp(dto: AuthCredentialsDto): Promise<void> {
-    await this.usersRepository.create(dto);
+  async signUp(dto: AuthCredentialsDto): Promise<User> {
+    return this.usersRepository.create(dto);
   }
 
   async signIn(dto: AuthCredentialsDto): Promise<{ access_token: string; }> {

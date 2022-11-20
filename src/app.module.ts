@@ -2,11 +2,10 @@ import { CacheModule, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import * as redisStore from 'cache-manager-redis-store';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { MessagesModule } from './messages/messages.module';
 import { AuthModule } from './auth/auth.module';
 import { configValidationSchema } from './config.schema';
+import { ChatsModule } from './chats/chats.module';
 
 @Module({
   imports: [
@@ -24,8 +23,7 @@ import { configValidationSchema } from './config.schema';
     }),
     AuthModule,
     MessagesModule,
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+    ChatsModule,
+  ]
 })
-export class AppModule {}
+export class AppModule { }
