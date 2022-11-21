@@ -1,13 +1,11 @@
-import { Controller, Inject, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { CreateChatDto } from '../dtos/create-chat.dto';
 import { Chat } from '../entities/chat.entity';
 import { ChatsService } from '../services/chats.service';
 
 @Controller('chats')
 export class ChatsController {
-  constructor(
-    @Inject(ChatsService) private readonly chatsService: ChatsService
-  ) { }
+  constructor(private readonly chatsService: ChatsService) { }
 
   @Post()
   createChat(@Body() body: CreateChatDto): Promise<Chat> {

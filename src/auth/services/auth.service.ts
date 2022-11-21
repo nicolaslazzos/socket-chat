@@ -23,12 +23,25 @@ export class AuthService {
     const user = await this.usersRepository.findByUsername(username);
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const payload: JwtPayload = { username };
-      const access_token: string = this.jwtService.sign(payload);
+      const access_token: string = this.jwtService.sign({ username });
 
       return { access_token };
     }
 
     throw new UnauthorizedException();
+  }
+
+  async validateUser(token: string): Promise<User> {
+    try {
+      token = token.split(' ')[1];
+
+      if (!token) throw new UnauthorizedException();
+
+      const { username }: JwtPayload = this.jwtService.verify(token);
+
+      return this.usersRepository.findByUsername(username);
+    } catch (e) {
+      throw new UnauthorizedException();
+    }
   }
 }
