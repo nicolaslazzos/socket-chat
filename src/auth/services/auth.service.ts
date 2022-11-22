@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, Inject } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Inject, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { AuthCredentialsDto } from '../dtos/auth-credentials.dto';
@@ -14,6 +14,12 @@ export class AuthService {
   ) { }
 
   async signUp(dto: AuthCredentialsDto): Promise<User> {
+    let user: User;
+
+    try { user = await this.usersRepository.findByUsername(dto.username); } catch { }
+
+    if (user) throw new ConflictException();
+
     return this.usersRepository.create(dto);
   }
 

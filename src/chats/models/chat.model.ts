@@ -11,9 +11,6 @@ export class Chat extends Document {
   @Prop({ required: false })
   name: string;
 
-  @Prop({ type: [MongooseSchema.Types.ObjectId], ref: User.name, required: true })
-  users: User[];
-
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: User.name, required: true })
   creator: User;
 
@@ -32,14 +29,6 @@ MessageSchema.methods.toEntity = function (): ChatEntity {
   const res = this.toJSON();
 
   res.id = this._id.toString();
-
-  res.users = res.users.map((user: Types.ObjectId | User, i: number) => {
-    if (Types.ObjectId.isValid(user as Types.ObjectId)) {
-      return this.users[i].toString();
-    } else {
-      return this.users[i].toEntity();
-    }
-  });
 
   if (Types.ObjectId.isValid(res.creator)) {
     res.creator = this.creator.toString();

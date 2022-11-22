@@ -5,11 +5,14 @@ import { ChatsController } from './controllers/chats.controller';
 import { ChatRepository } from './repositories/chat.repository';
 import { ChatMongoRepository } from './repositories/chat.mongo.repository';
 import { ChatsService } from './services/chats.service';
+import { MemberRepository } from './repositories/member.repository';
+import { MemberMongoRepository } from './repositories/member.mongo.repository';
+import { MemberModel } from './models/member.model';
 
 @Module({
-  providers: [{ provide: ChatRepository.name, useClass: ChatMongoRepository }, ChatsService],
-  imports: [MongooseModule.forFeature([ChatModel])],
+  providers: [{ provide: ChatRepository.name, useClass: ChatMongoRepository }, { provide: MemberRepository.name, useClass: MemberMongoRepository }, ChatsService],
+  imports: [MongooseModule.forFeature([ChatModel, MemberModel])],
   controllers: [ChatsController],
-  exports: [{ provide: ChatRepository.name, useClass: ChatMongoRepository }]
+  exports: [ChatsService]
 })
 export class ChatsModule { }
