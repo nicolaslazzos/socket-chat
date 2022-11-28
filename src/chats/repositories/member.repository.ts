@@ -6,4 +6,5 @@ export abstract class MemberRepository {
   public abstract createMany(dto: CreateMemberDto[]): Promise<Member[]>;
   public abstract findByUser(user: string): Promise<Member[]>;
   public abstract findByChat(user: string): Promise<Member[]>;
+  public abstract findByChatAndUsers(chat: string, users: string[]): Promise<Member[]>;
 }

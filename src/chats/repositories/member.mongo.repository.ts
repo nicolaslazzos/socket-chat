@@ -38,4 +38,10 @@ export class MemberMongoRepository extends MemberRepository {
 
     return members.map((member) => member.toEntity());
   }
+
+  async findByChatAndUsers(chat: string, users: string[]): Promise<Member[]> {
+    const members = await this.memberModel.find({ chat, user: users }).populate('user', 'username').populate('chat');
+
+    return members.map((member) => member.toEntity());
+  }
 }

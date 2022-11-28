@@ -1,18 +1,16 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { Socket } from 'socket.io';
-import { AuthService } from './services/auth.service';
+import { AuthStrategy } from './constants';
+import { User } from './entities/user.entity';
 
 @Injectable()
-export class WsAuthGuard implements CanActivate {
-  constructor(private readonly authService: AuthService) { }
-
+export class WsAuthGuard extends AuthGuard(AuthStrategy.JWT) {
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    await super.canActivate(context);
+
     const client: Socket = context.switchToWs().getClient();
-    const token: string = client.handshake.headers.authorization;
-
-    const user = await this.authService.validateUser(token);
-
-    context.switchToHttp().getRequest().user = user;
+    const user: User = context.switchToHttp().getRequest().user;
 
     if (!client.rooms.has(user.id)) client.join(user.id);
 

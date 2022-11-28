@@ -4,10 +4,10 @@ import { Server } from 'socket.io';
 import { Cache } from 'cache-manager';
 import { CreateMessageDto } from './dtos/create-message.dto';
 import { MessageRepository } from './repositories/message.repository';
-import { WsAuthGuard } from '../auth/ws-auth.guard';
-import { GetUser } from '../auth/get-user-decorator';
+import { GetUser } from '../auth/get-user.decorator';
 import { User } from '../auth/entities/user.entity';
 import { ChatsService } from 'src/chats/services/chats.service';
+import { WsAuthGuard } from 'src/auth/ws-auth.guard';
 
 @WebSocketGateway()
 export class MessagesGateway {

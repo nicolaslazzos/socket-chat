@@ -8,11 +8,12 @@ import { JwtStrategy } from './jwt.strategy';
 import { UserModel } from './models/user.model';
 import { UserRepository } from './repositories/user.repository';
 import { UserMongoRepository } from './repositories/user.mongo.repository';
+import { AuthStrategy } from './constants';
 
 @Module({
   imports: [
-    PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({ secret: `${process.env.JWT_SECRET}`, signOptions: { expiresIn: 3600 } }),
+    PassportModule.register({ defaultStrategy: AuthStrategy.JWT }),
+    JwtModule.registerAsync({ useFactory: () => ({ secret: process.env.JWT_SECRET, signOptions: { expiresIn: 3600 } }) }),
     MongooseModule.forFeature([UserModel])
   ],
   providers: [

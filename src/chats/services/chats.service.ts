@@ -1,4 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
+import { User } from '../../auth/entities/user.entity';
 import { CreateChatDto } from '../dtos/create-chat.dto';
 import { CreateMemberDto } from '../dtos/create-member.dto';
 import { Chat } from '../entities/chat.entity';
@@ -18,11 +19,11 @@ export class ChatsService {
   async create(dto: CreateChatDto): Promise<Chat> {
     const chat = await this.chatRepository.create(dto);
 
-    const members: CreateMemberDto[] = [];
+    const users = Array.from(new Set([...dto.users, dto.creator]));
 
-    new Set([...dto.users, chat.creator as string]).forEach((user: string) => {
+    const members: CreateMemberDto[] = users.map((user: string) => {
       const type = user === chat.creator ? MemberType.OWNER : MemberType.MEMBER;
-      members.push({ type, chat: chat.id, user });
+      return { type, chat: chat.id, user };
     });
 
     await this.memberRepository.createMany(members);
@@ -40,5 +41,17 @@ export class ChatsService {
 
   async findMembersByChat(chat: string): Promise<Member[]> {
     return this.memberRepository.findByChat(chat);
+  }
+
+  async addMembers(id: string, members: CreateMemberDto[]): Promise<Member[]> {
+    const chat = await this.findById(id);
+
+    const exists = await this.memberRepository.findByChatAndUsers(chat.id, members.map(m => m.user));
+
+    const users = exists.map(m => (m.user as User).id);
+
+    members = members.filter(m => !users.includes(m.user)).map(m => ({ ...m, chat: chat.id }));
+
+    return this.memberRepository.createMany(members);
   }
 }
