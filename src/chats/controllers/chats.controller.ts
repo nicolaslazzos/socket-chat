@@ -18,18 +18,18 @@ export class ChatsController {
     return this.chatsService.create({ ...dto, creator: user.id });
   }
 
-  @Get('/:id')
-  getById(@Param('id') id: string): Promise<Chat> {
-    return this.chatsService.findById(id);
+  @Get()
+  getByUser(@GetUser() user: User): Promise<Chat[]> {
+    return this.chatsService.findByUser(user.id);
   }
 
-  @Get('/user/:id')
-  getByUser(@Param('id') user: string): Promise<Chat[]> {
-    return this.chatsService.findByUser(user);
+  @Get('/:id')
+  getById(@Param('id') id: string, @GetUser() user: User): Promise<Chat> {
+    return this.chatsService.findByIdAndCreator(id, user.id);
   }
 
   @Post('/:id/members')
-  addMembers(@Param('id') chat: string, @Body() dto: CreateMemberDto[]): Promise<Member[]> {
-    return this.chatsService.addMembers(chat, dto);
+  addMembers(@Param('id') chat: string, @GetUser() user: User, @Body() dto: CreateMemberDto[]): Promise<Member[]> {
+    return this.chatsService.addMembers(chat, user.id, dto);
   }
 }

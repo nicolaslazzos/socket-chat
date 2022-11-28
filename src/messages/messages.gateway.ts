@@ -23,6 +23,8 @@ export class MessagesGateway {
   @UseGuards(WsAuthGuard)
   @SubscribeMessage('new_message')
   async handleMessage(@GetUser() user: User, @MessageBody() dto: CreateMessageDto) {
+    await this.chatsService.canUserSendMessages(dto.chat, user.id);
+
     const message = await this.messageRepository.create({ ...dto, user: user.id });
 
     const members = await this.chatsService.findMembersByChat(message.chat);
@@ -33,6 +35,8 @@ export class MessagesGateway {
   @UseGuards(WsAuthGuard)
   @SubscribeMessage('get_messages')
   async handleGetMessages(@GetUser() user: User, @MessageBody('chat') chat: string) {
+    await this.chatsService.canUserGetMessages(chat, user.id);
+
     const messages = await this.messageRepository.findByChat(chat);
 
     this.server.to(user.id).emit('get_messages_response', messages);

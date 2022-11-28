@@ -32,6 +32,14 @@ export class ChatMongoRepository extends ChatRepository {
     return chat.toEntity();
   }
 
+  async findByIdAndCreator(id: string, creator: string): Promise<Chat> {
+    const chat = await this.chatModel.findOne({ _id: id, creator }).populate('creator', 'username');
+
+    if (!chat) throw new NotFoundException();
+
+    return chat.toEntity();
+  }
+
   async findByUser(user: string): Promise<Chat[]> {
     const members = await this.memberModel.find({ user }).distinct('chat');
 
