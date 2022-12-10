@@ -1,13 +1,16 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema, Types } from 'mongoose';
-import { Member as MemberEntity, MemberType } from '../entities/member.entity';
+import { Member as MemberEntity, MemberRole, MemberStatus } from '../entities/member.entity';
 import { User } from '../../auth/models/user.model';
-import { Chat } from './chat.model';
+import { Chat } from '../../chats/models/chat.model';
 
 @Schema()
 export class Member extends Document {
-  @Prop({ enum: MemberType, required: true })
-  type: MemberType;
+  @Prop({ enum: MemberRole, default: MemberRole.MEMBER, required: true })
+  role: MemberRole;
+
+  @Prop({ enum: MemberStatus, default: MemberStatus.ACTIVE, required: true })
+  status: MemberStatus;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: Chat.name, required: true })
   chat: Chat;

@@ -4,16 +4,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ChatRepository } from './chat.repository';
 import { Chat as ChatModel } from '../models/chat.model';
 import { CreateChatDto } from '../dtos/create-chat.dto';
-import { Chat } from '../entities/chat.entity';
-import { Member as MemberModel } from '../models/member.model';
+import { Chat, ChatStatus } from '../entities/chat.entity';
 
 @Injectable()
 export class ChatMongoRepository extends ChatRepository {
   constructor(
     @InjectModel(ChatModel.name)
-    private readonly chatModel: Model<ChatModel>,
-    @InjectModel(MemberModel.name)
-    private readonly memberModel: Model<MemberModel>
+    private readonly chatModel: Model<ChatModel>
   ) {
     super();
   }
@@ -25,25 +22,15 @@ export class ChatMongoRepository extends ChatRepository {
   }
 
   async findById(id: string): Promise<Chat> {
-    const chat = await this.chatModel.findById(id).populate('creator', 'username');
+    const chat = await this.chatModel.findOne({ _id: id, status: { $ne: ChatStatus.DELETED } }).populate('creator', 'username');
 
     if (!chat) throw new NotFoundException();
 
     return chat.toEntity();
   }
 
-  async findByIdAndCreator(id: string, creator: string): Promise<Chat> {
-    const chat = await this.chatModel.findOne({ _id: id, creator }).populate('creator', 'username');
-
-    if (!chat) throw new NotFoundException();
-
-    return chat.toEntity();
-  }
-
-  async findByUser(user: string): Promise<Chat[]> {
-    const members = await this.memberModel.find({ user }).distinct('chat');
-
-    const chats = await this.chatModel.find({ _id: members }).populate('creator', 'username');
+  async findByIds(ids: string[]): Promise<Chat[]> {
+    const chats = await this.chatModel.find({ _id: { $in: ids }, status: { $ne: ChatStatus.DELETED } }).populate('creator', 'username');
 
     return chats.map((chat) => chat.toEntity());
   }

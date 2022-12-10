@@ -1,10 +1,10 @@
 import { IsEnum, IsString } from 'class-validator';
-import { MemberType } from '../entities/member.entity';
+import { MemberRole } from '../entities/member.entity';
 
 export class CreateMemberDto {
   @IsString()
-  @IsEnum(MemberType)
-  type: MemberType;
+  @IsEnum(MemberRole)
+  role: MemberRole;
 
   @IsString()
   chat: string;

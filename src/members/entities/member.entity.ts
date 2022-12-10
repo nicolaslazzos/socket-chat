@@ -1,15 +1,21 @@
 import { User } from "../../auth/entities/user.entity";
-import { Chat } from './chat.entity';
+import { Chat } from '../../chats/entities/chat.entity';
 
-export enum MemberType {
-  OWNER = 'owner',
+export enum MemberRole {
   ADMIN = 'admin',
   MEMBER = 'member'
 }
 
+export enum MemberStatus {
+  ACTIVE = 'active',
+  MUTED = 'muted',
+  DELETED = 'deleted'
+}
+
 export class Member {
   id: string;
-  type: MemberType;
+  role: MemberRole;
+  status: MemberStatus;
   user: string | User;
   chat: string | Chat;
   created: string;

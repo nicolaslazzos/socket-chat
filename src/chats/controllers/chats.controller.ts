@@ -5,8 +5,9 @@ import { GetUser } from 'src/auth/get-user.decorator';
 import { CreateChatDto } from '../dtos/create-chat.dto';
 import { Chat } from '../entities/chat.entity';
 import { ChatsService } from '../services/chats.service';
-import { CreateMemberDto } from '../dtos/create-member.dto';
-import { Member } from '../entities/member.entity';
+import { Roles } from '../../members/role.decorator';
+import { RolesGuard } from '../../members/role.guard';
+import { MemberRole } from '../../members/entities/member.entity';
 
 @Controller('chats')
 @UseGuards(AuthGuard())
@@ -23,13 +24,10 @@ export class ChatsController {
     return this.chatsService.findByUser(user.id);
   }
 
-  @Get('/:id')
-  getById(@Param('id') id: string, @GetUser() user: User): Promise<Chat> {
-    return this.chatsService.findByIdAndCreator(id, user.id);
-  }
-
-  @Post('/:id/members')
-  addMembers(@Param('id') chat: string, @GetUser() user: User, @Body() dto: CreateMemberDto[]): Promise<Member[]> {
-    return this.chatsService.addMembers(chat, user.id, dto);
+  @Get('/:chat')
+  @Roles(MemberRole.MEMBER)
+  @UseGuards(RolesGuard)
+  getById(@Param('chat') id: string): Promise<Chat> {
+    return this.chatsService.findById(id);
   }
 }

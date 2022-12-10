@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { MemberRepository } from './member.repository';
-import { Member as MemberModel } from '../models/member.model';
-import { CreateMemberDto } from '../dtos/create-member.dto';
-import { Member } from '../entities/member.entity';
+import { Member as MemberModel } from '../../members/models/member.model';
+import { CreateMemberDto } from '../../members/dtos/create-member.dto';
+import { Member, MemberStatus } from '../../members/entities/member.entity';
 
 @Injectable()
 export class MemberMongoRepository extends MemberRepository {
@@ -28,19 +28,19 @@ export class MemberMongoRepository extends MemberRepository {
   }
 
   async findByUser(user: string): Promise<Member[]> {
-    const members = await this.memberModel.find({ user }).populate('user', 'username').populate('chat');
+    const members = await this.memberModel.find({ user, status: { $ne: MemberStatus.DELETED } }).populate('user', 'username').populate('chat');
 
     return members.map((member) => member.toEntity());
   }
 
   async findByChat(chat: string): Promise<Member[]> {
-    const members = await this.memberModel.find({ chat }).populate('user', 'username').populate('chat');
+    const members = await this.memberModel.find({ chat, status: { $ne: MemberStatus.DELETED } }).populate('user', 'username').populate('chat');
 
     return members.map((member) => member.toEntity());
   }
 
   async findByChatAndUsers(chat: string, users: string[]): Promise<Member[]> {
-    const members = await this.memberModel.find({ chat, user: users }).populate('user', 'username').populate('chat');
+    const members = await this.memberModel.find({ chat, user: users, status: { $ne: MemberStatus.DELETED } }).populate('user', 'username').populate('chat');
 
     return members.map((member) => member.toEntity());
   }
