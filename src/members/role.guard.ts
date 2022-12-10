@@ -1,6 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Socket } from 'socket.io';
+import { Chat } from 'src/chats/entities/chat.entity';
 import { MemberRole } from './entities/member.entity';
 import { ROLES_KEY, ROLES_VALUES } from './role.decorator';
 import { MembersService } from './services/members.service';
@@ -26,14 +27,22 @@ export class RolesGuard implements CanActivate {
     } else {
       const { params, body, query, headers } = request;
 
-      chat = params?.chat ?? body?.chat ?? query?.chat ?? headers?.chat;
+      const member = params?.member ?? body?.member ?? query?.member ?? headers?.member;
+
+      if (member) {
+        // if a member involved in the action, get the chat from it
+        const m = await this.membersService.findById(member);
+
+        chat = (m?.chat as Chat)?.id;
+      } else {
+        // else, get directly the involved chat
+        chat = params?.chat ?? body?.chat ?? query?.chat ?? headers?.chat;
+      }
     }
 
     if (!chat) return false;
 
-    const user = context.switchToHttp().getRequest().user;
-
-    const members = await this.membersService.findByChatAndUsers(chat, [user.id]);
+    const members = await this.membersService.findByChatAndUsers(chat, [request.user.id]);
 
     if (!members?.length) return false;
 

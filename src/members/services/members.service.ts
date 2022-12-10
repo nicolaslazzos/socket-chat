@@ -11,6 +11,10 @@ export class MembersService {
     private readonly membersRepository: MemberRepository
   ) { }
 
+  public async findById(id: string): Promise<Member> {
+    return this.membersRepository.findById(id);
+  }
+
   public async findByChat(chat: string): Promise<Member[]> {
     return this.membersRepository.findByChat(chat);
   }

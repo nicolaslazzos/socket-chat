@@ -27,6 +27,12 @@ export class MemberMongoRepository extends MemberRepository {
     return members.map((member) => member.toEntity());
   }
 
+  async findById(id: string): Promise<Member> {
+    const member = await this.memberModel.findOne({ _id: id, status: { $ne: MemberStatus.DELETED } }).populate('user', 'username').populate('chat');
+
+    return member.toEntity();
+  }
+
   async findByUser(user: string): Promise<Member[]> {
     const members = await this.memberModel.find({ user, status: { $ne: MemberStatus.DELETED } }).populate('user', 'username').populate('chat');
 
