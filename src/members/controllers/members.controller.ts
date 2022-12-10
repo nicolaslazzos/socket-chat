@@ -3,8 +3,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { CreateMemberDto } from '../dtos/create-member.dto';
 import { MembersService } from '../services/members.service';
 import { Member, MemberRole } from '../entities/member.entity';
-import { Roles } from '../role.decorator';
-import { RolesGuard } from '../role.guard';
+import { Roles } from '../../common/role.decorator';
+import { RolesGuard } from '../../common/role.guard';
 
 @Controller('members')
 @UseGuards(AuthGuard())

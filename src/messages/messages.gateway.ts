@@ -8,8 +8,8 @@ import { GetUser } from '../auth/get-user.decorator';
 import { User } from '../auth/entities/user.entity';
 import { WsAuthGuard } from 'src/auth/ws-auth.guard';
 import { MembersService } from 'src/members/services/members.service';
-import { RolesGuard } from 'src/members/role.guard';
-import { Roles } from 'src/members/role.decorator';
+import { RolesGuard } from 'src/common/role.guard';
+import { Roles } from 'src/common/role.decorator';
 import { MemberRole } from 'src/members/entities/member.entity';
 
 @WebSocketGateway()
@@ -29,7 +29,7 @@ export class MessagesGateway {
   async handleMessage(@GetUser() user: User, @MessageBody() dto: CreateMessageDto) {
     const message = await this.messageRepository.create({ ...dto, user: user.id });
 
-    const members = await this.membersService.findByChat(message.chat);
+    const members = await this.membersService.findByChat(message.chat as string);
 
     this.server.to(members.map((member) => (member.user as User).id)).emit('new_message_response', message);
   }
