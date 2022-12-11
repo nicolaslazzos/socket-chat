@@ -23,7 +23,7 @@ export class MessageMongoRepository extends MessageRepository {
   }
 
   async findById(id: string): Promise<Message> {
-    const message = await this.messageModel.findById(id).populate({ path: 'member', populate: { path: 'user', select: 'username' } }).populate({ path: 'chat' });
+    const message = await this.messageModel.findOne({ _id: id, status: { $ne: MessageStatus.DELETED } }).populate({ path: 'member', populate: { path: 'user', select: 'username' } }).populate({ path: 'chat' });
 
     if (!message) throw new NotFoundException();
 
@@ -31,19 +31,19 @@ export class MessageMongoRepository extends MessageRepository {
   }
 
   async findByUser(user: string): Promise<Message[]> {
-    const messages = await this.messageModel.find({ user }).populate({ path: 'member', populate: { path: 'user', select: 'username' } }).populate({ path: 'chat' });
+    const messages = await this.messageModel.find({ user, status: { $ne: MessageStatus.DELETED } }).populate({ path: 'member', populate: { path: 'user', select: 'username' } }).populate({ path: 'chat' });
 
     return messages.map((message) => message.toEntity());
   }
 
   async findByChat(chat: string): Promise<Message[]> {
-    const messages = await this.messageModel.find({ chat }).populate({ path: 'member', populate: { path: 'user', select: 'username' } }).populate({ path: 'chat' });
+    const messages = await this.messageModel.find({ chat, status: { $ne: MessageStatus.DELETED } }).populate({ path: 'member', populate: { path: 'user', select: 'username' } }).populate({ path: 'chat' });
 
     return messages.map((message) => message.toEntity());
   }
 
   async updateById(id: string, dto: UpdateMessageDto): Promise<Message> {
-    const message = await this.messageModel.findByIdAndUpdate(id, dto, { new: true });
+    const message = await this.messageModel.findOneAndUpdate({ _id: id, status: { $ne: MessageStatus.DELETED } }, dto, { new: true });
 
     if (!message) throw new NotFoundException();
 
