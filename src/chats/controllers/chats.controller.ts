@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, Patch, Delete, Param, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../../auth/entities/user.entity';
 import { GetUser } from 'src/auth/get-user.decorator';
@@ -8,6 +8,7 @@ import { ChatsService } from '../services/chats.service';
 import { Roles } from '../../common/role.decorator';
 import { RolesGuard } from '../../common/role.guard';
 import { MemberRole } from '../../members/entities/member.entity';
+import { UpdateChatDto } from '../dtos/update-chat.dto';
 
 @Controller('chats')
 @UseGuards(AuthGuard())
@@ -29,5 +30,19 @@ export class ChatsController {
   @UseGuards(RolesGuard)
   getChat(@Param('chat') id: string): Promise<Chat> {
     return this.chatsService.findById(id);
+  }
+
+  @Patch('/:chat')
+  @Roles(MemberRole.ADMIN)
+  @UseGuards(RolesGuard)
+  updateChat(@Param('chat') id: string, @Body() dto: UpdateChatDto): Promise<Chat> {
+    return this.chatsService.updateById(id, dto);
+  }
+
+  @Delete('/:chat')
+  @Roles(MemberRole.OWNER)
+  @UseGuards(RolesGuard)
+  deleteChat(@Param('chat') id: string): Promise<Chat> {
+    return this.chatsService.deleteById(id);
   }
 }
