@@ -30,8 +30,7 @@ export class ChatsService {
       return { ...member, role, chat: chat.id };
     });
 
-
-    await this.membersService.createMembers(chat.id, members);
+    await this.membersService.create(chat.id, members);
 
     return chat;
   }

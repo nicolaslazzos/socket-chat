@@ -1,4 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, ForbiddenException } from '@nestjs/common';
+import { MemberStatus } from 'src/members/entities/member.entity';
 import { MembersService } from 'src/members/services/members.service';
 import { CreateMessageDto } from '../dtos/create-message.dto';
 import { UpdateMessageDto } from '../dtos/update-message.dto';
@@ -23,6 +24,8 @@ export class MessagesService {
 
   public async create(user: string, dto: CreateMessageDto): Promise<Message> {
     const member = await this.membersService.findByChatAndUser(dto.chat, user);
+
+    if (member.status !== MemberStatus.ACTIVE) throw new ForbiddenException();
 
     return this.messagesRepository.create({ ...dto, member: member.id });
   }

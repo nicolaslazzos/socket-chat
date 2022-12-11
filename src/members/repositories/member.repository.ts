@@ -1,4 +1,5 @@
 import { CreateMemberDto } from '../dtos/create-member.dto';
+import { UpdateMemberDto } from '../dtos/update-member.dto';
 import { Member } from '../entities/member.entity';
 
 export abstract class MemberRepository {
@@ -9,4 +10,5 @@ export abstract class MemberRepository {
   public abstract findByChat(chat: string): Promise<Member[]>;
   public abstract findByChatAndUser(chat: string, user: string): Promise<Member>;
   public abstract findByChatAndUsers(chat: string, users: string[]): Promise<Member[]>;
+  public abstract updateById(id: string, dto: UpdateMemberDto): Promise<Member>;
 }
