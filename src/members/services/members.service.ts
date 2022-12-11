@@ -23,6 +23,10 @@ export class MembersService {
     return this.membersRepository.findByUser(user);
   }
 
+  public async findByChatAndUser(chat: string, user: string): Promise<Member> {
+    return this.membersRepository.findByChatAndUser(chat, user);
+  }
+
   public async findByChatAndUsers(chat: string, users: string[]): Promise<Member[]> {
     return this.membersRepository.findByChatAndUsers(chat, users);
   }

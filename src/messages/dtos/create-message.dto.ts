@@ -6,8 +6,8 @@ export class CreateMessageDto {
 
   @IsOptional()
   @IsString()
-  user?: string;
+  member?: string;
 
   @IsString()
-  message: string;
+  text: string;
 }

@@ -20,14 +20,14 @@ export class ChatsController {
   }
 
   @Get()
-  getByUser(@GetUser() user: User): Promise<Chat[]> {
+  getChats(@GetUser() user: User): Promise<Chat[]> {
     return this.chatsService.findByUser(user.id);
   }
 
   @Get('/:chat')
   @Roles(MemberRole.MEMBER)
   @UseGuards(RolesGuard)
-  getById(@Param('chat') id: string): Promise<Chat> {
+  getChat(@Param('chat') id: string): Promise<Chat> {
     return this.chatsService.findById(id);
   }
 }

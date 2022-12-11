@@ -2,10 +2,11 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Socket } from 'socket.io';
 import { Chat } from 'src/chats/entities/chat.entity';
-import { MemberRole } from '../members/entities/member.entity';
+import { Member, MemberRole } from '../members/entities/member.entity';
 import { ROLES_KEY, ROLES_VALUES } from './role.decorator';
 import { MembersService } from '../members/services/members.service';
 import { MessagesService } from 'src/messages/services/messages.service';
+import { User } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -20,41 +21,44 @@ export class RolesGuard implements CanActivate {
 
     if (!requiredRoles?.length) return true;
 
-    let message: string;
-    let member: string;
-    let chat: string;
+    let messageId: string;
+    let memberId: string;
+    let chatId: string;
 
-    const request = context.switchToHttp().getRequest();
+    let isOwner: boolean = false;
 
-    if (request instanceof Socket) {
-      member = context.switchToWs().getData()?.member ?? request.handshake.headers?.member;
-      chat = context.switchToWs().getData()?.chat ?? request.handshake.headers?.chat;
-    } else {
-      const { params, body, query, headers } = request;
+    let request = context.switchToHttp().getRequest();
 
-      message = params?.message ?? query?.message ?? headers?.message;
-      member = params?.member ?? body?.member ?? query?.member ?? headers?.member;
-      chat = params?.chat ?? body?.chat ?? query?.chat ?? headers?.chat;
+    const user = request.user.id;
+
+    if (request instanceof Socket) request = { body: context.switchToWs().getData(), headers: request.handshake.headers };
+
+    const { params, body, query, headers } = request;
+
+    messageId = params?.message ?? body?.message ?? query?.message ?? headers?.message;
+    memberId = params?.member ?? body?.member ?? query?.member ?? headers?.member;
+    chatId = params?.chat ?? body?.chat ?? query?.chat ?? headers?.chat;
+
+    if (messageId) {
+      const message = await this.messagesService.findById(messageId);
+
+      isOwner = ((message?.member as Member)?.user as User).id === user;
+      chatId = (message?.chat as Chat)?.id;
+    } else if (memberId) {
+      const member = await this.membersService.findById(memberId);
+
+      isOwner = (member?.user as User)?.id === user;
+      chatId = (member?.chat as Chat)?.id;
     }
 
-    if (message) {
-      // if a message involved in the action, get the chat from it
-      const m = await this.messagesService.findById(message);
+    if (!chatId) return false;
 
-      chat = (m?.chat as Chat)?.id;
-    } else if (member) {
-      // if a member involved in the action, get the chat from it
-      const m = await this.membersService.findById(member);
+    const member = await this.membersService.findByChatAndUser(chatId, user);
 
-      chat = (m?.chat as Chat)?.id;
-    }
+    isOwner = !isOwner ? (member.chat as Chat).creator === user : isOwner;
 
-    if (!chat) return false;
+    if (isOwner) member.role = MemberRole.OWNER;
 
-    const members = await this.membersService.findByChatAndUsers(chat, [request.user.id]);
-
-    if (!members?.length) return false;
-
-    return requiredRoles.some((role) => ROLES_VALUES[members[0].role] >= ROLES_VALUES[role]);
+    return requiredRoles.some((role) => ROLES_VALUES[member.role] >= ROLES_VALUES[role]);
   }
 }

@@ -3,8 +3,9 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateMessageDto } from '../dtos/create-message.dto';
 import { Message as MessageModel } from '../models/message.model';
-import { Message } from '../entities/message.entity';
+import { Message, MessageStatus } from '../entities/message.entity';
 import { MessageRepository } from './message.repository';
+import { UpdateMessageDto } from '../dtos/update-message.dto';
 
 @Injectable()
 export class MessageMongoRepository extends MessageRepository {
@@ -22,7 +23,7 @@ export class MessageMongoRepository extends MessageRepository {
   }
 
   async findById(id: string): Promise<Message> {
-    const message = await this.messageModel.findById(id).populate('user', 'username').populate('chat');
+    const message = await this.messageModel.findById(id).populate({ path: 'member', populate: { path: 'user', select: 'username' } }).populate({ path: 'chat' });
 
     if (!message) throw new NotFoundException();
 
@@ -30,14 +31,22 @@ export class MessageMongoRepository extends MessageRepository {
   }
 
   async findByUser(user: string): Promise<Message[]> {
-    const messages = await this.messageModel.find({ user }).populate('user', 'username');
+    const messages = await this.messageModel.find({ user }).populate({ path: 'member', populate: { path: 'user', select: 'username' } }).populate({ path: 'chat' });
 
     return messages.map((message) => message.toEntity());
   }
 
   async findByChat(chat: string): Promise<Message[]> {
-    const messages = await this.messageModel.find({ chat }).populate('user', 'username');
+    const messages = await this.messageModel.find({ chat }).populate({ path: 'member', populate: { path: 'user', select: 'username' } }).populate({ path: 'chat' });
 
     return messages.map((message) => message.toEntity());
+  }
+
+  async updateById(id: string, dto: UpdateMessageDto): Promise<Message> {
+    const message = await this.messageModel.findByIdAndUpdate(id, dto, { new: true });
+
+    if (!message) throw new NotFoundException();
+
+    return message.toEntity();
   }
 }

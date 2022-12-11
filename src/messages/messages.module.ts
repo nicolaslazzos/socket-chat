@@ -1,6 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { MessagesGateway } from './messages.gateway';
-import { MessagesController } from './messages.controller';
+import { MessagesController } from './controllers/messages.controller';
 import { MessageRepository } from './repositories/message.repository';
 import { MessageMongoRepository } from './repositories/message.mongo.repository';
 import { MongooseModule } from '@nestjs/mongoose';

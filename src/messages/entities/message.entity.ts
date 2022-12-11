@@ -1,11 +1,17 @@
 import { Chat } from "../../chats/entities/chat.entity";
-import { User } from "../../auth/entities/user.entity";
+import { Member } from "src/members/entities/member.entity";
+
+export enum MessageStatus {
+  ACTIVE = 'active',
+  DELETED = 'deleted'
+}
 
 export class Message {
   id: string;
+  status: MessageStatus;
   chat: string | Chat;
-  user: string | User;
-  message: string;
+  member: string | Member;
+  text: string;
   created: string;
   updated: string;
 

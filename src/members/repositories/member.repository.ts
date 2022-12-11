@@ -7,5 +7,6 @@ export abstract class MemberRepository {
   public abstract findById(id: string): Promise<Member>;
   public abstract findByUser(user: string): Promise<Member[]>;
   public abstract findByChat(chat: string): Promise<Member[]>;
+  public abstract findByChatAndUser(chat: string, user: string): Promise<Member>;
   public abstract findByChatAndUsers(chat: string, users: string[]): Promise<Member[]>;
 }

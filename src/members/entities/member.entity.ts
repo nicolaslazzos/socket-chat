@@ -2,6 +2,7 @@ import { User } from "../../auth/entities/user.entity";
 import { Chat } from '../../chats/entities/chat.entity';
 
 export enum MemberRole {
+  OWNER = 'owner',
   ADMIN = 'admin',
   MEMBER = 'member'
 }
