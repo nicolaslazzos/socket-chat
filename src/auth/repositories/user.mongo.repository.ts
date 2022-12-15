@@ -17,18 +17,9 @@ export class UserMongoRepository extends UserRepository {
   }
 
   async create(dto: AuthCredentialsDto): Promise<User> {
-    try {
-      const { username, password } = dto;
+    const user = await this.userModel.create(dto);
 
-      const salt = await bcrypt.genSalt();
-      const hashed = await bcrypt.hash(password, salt);
-
-      const user = await this.userModel.create({ username, password: hashed });
-
-      return user.toEntity();
-    } catch (e) {
-      throw new InternalServerErrorException();
-    }
+    return user.toEntity();
   }
 
   async findByUsername(username: string): Promise<User> {

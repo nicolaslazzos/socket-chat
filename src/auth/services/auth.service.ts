@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, Inject, ConflictException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Inject, ConflictException, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { AuthCredentialsDto } from '../dtos/auth-credentials.dto';
@@ -20,7 +20,16 @@ export class AuthService {
 
     if (user) throw new ConflictException();
 
-    return this.usersRepository.create(dto);
+    try {
+      const { username, password } = dto;
+
+      const salt = await bcrypt.genSalt();
+      const hashed = await bcrypt.hash(password, salt);
+
+      return this.usersRepository.create({ username, password: hashed });
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
   }
 
   async signIn(dto: AuthCredentialsDto): Promise<{ access_token: string; }> {
