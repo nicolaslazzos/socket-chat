@@ -7,7 +7,6 @@ export class User {
   password: string;
 
   constructor(partial: Partial<User>) {
-    delete partial.password;
     Object.assign(this, partial);
   }
 }
