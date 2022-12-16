@@ -42,7 +42,6 @@ export class AuthService {
     const access_token: string = this.jwtService.sign({ username });
 
     return { access_token };
-
   }
 
   async validate(payload: JwtPayload): Promise<User> {
