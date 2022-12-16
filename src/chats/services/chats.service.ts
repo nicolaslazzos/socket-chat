@@ -1,4 +1,4 @@
-import { Injectable, Inject, BadRequestException } from '@nestjs/common';
+import { Injectable, Inject, BadRequestException, NotFoundException } from '@nestjs/common';
 import { CreateChatDto } from '../dtos/create-chat.dto';
 import { CreateMemberDto } from '../../members/dtos/create-member.dto';
 import { Chat, ChatStatus, ChatType } from '../entities/chat.entity';
@@ -36,7 +36,11 @@ export class ChatsService {
   }
 
   async findById(id: string): Promise<Chat> {
-    return this.chatRepository.findById(id);
+    const chat = await this.chatRepository.findById(id);
+
+    if (!chat) throw new NotFoundException();
+
+    return chat;
   }
 
   async findByUser(user: string): Promise<Chat[]> {
@@ -46,7 +50,11 @@ export class ChatsService {
   }
 
   async updateById(id: string, dto: UpdateChatDto): Promise<Chat> {
-    return this.chatRepository.updateById(id, dto);
+    const chat = await this.chatRepository.updateById(id, dto);
+
+    if (!chat) throw new NotFoundException();
+
+    return chat;
   }
 
   async deleteById(id: string): Promise<Chat> {

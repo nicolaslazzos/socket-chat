@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { ChatRepository } from './chat.repository';
@@ -25,9 +25,7 @@ export class ChatMongoRepository extends ChatRepository {
   async findById(id: string): Promise<Chat> {
     const chat = await this.chatModel.findOne({ _id: id, status: { $ne: ChatStatus.DELETED } }).populate('creator', 'username');
 
-    if (!chat) throw new NotFoundException();
-
-    return chat.toEntity();
+    return chat ? chat.toEntity() : null;
   }
 
   async findByIds(ids: string[]): Promise<Chat[]> {
@@ -39,8 +37,6 @@ export class ChatMongoRepository extends ChatRepository {
   async updateById(id: string, dto: UpdateChatDto): Promise<Chat> {
     const chat = await this.chatModel.findOneAndUpdate({ _id: id, status: { $ne: ChatStatus.DELETED } }, dto, { new: true });
 
-    if (!chat) throw new NotFoundException();
-
-    return chat.toEntity();
+    return chat ? chat.toEntity() : null;
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { MemberRepository } from './member.repository';
@@ -31,9 +31,7 @@ export class MemberMongoRepository extends MemberRepository {
   async findById(id: string): Promise<Member> {
     const member = await this.memberModel.findOne({ _id: id, status: { $ne: MemberStatus.DELETED } }).populate('user', 'username').populate('chat');
 
-    if (!member) throw new NotFoundException();
-
-    return member.toEntity();
+    return member ? member.toEntity() : null;
   }
 
   async findByUser(user: string): Promise<Member[]> {
@@ -51,9 +49,7 @@ export class MemberMongoRepository extends MemberRepository {
   async findByChatAndUser(chat: string, user: string): Promise<Member> {
     const members = await this.findByChatAndUsers(chat, [user]);
 
-    if (!members?.length) throw new NotFoundException();
-
-    return members[0];
+    return members?.length ? members[0] : null;
   }
 
   async findByChatAndUsers(chat: string, users: string[]): Promise<Member[]> {
@@ -65,8 +61,6 @@ export class MemberMongoRepository extends MemberRepository {
   async updateById(id: string, dto: UpdateMemberDto): Promise<Member> {
     const member = await this.memberModel.findOneAndUpdate({ _id: id, status: { $ne: MemberStatus.DELETED } }, dto, { new: true });
 
-    if (!member) throw new NotFoundException();
-
-    return member.toEntity();
+    return member ? member.toEntity() : null;
   }
 }

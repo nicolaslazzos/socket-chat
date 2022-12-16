@@ -1,4 +1,4 @@
-import { Inject, Injectable, ForbiddenException } from '@nestjs/common';
+import { Inject, Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { MemberStatus } from 'src/members/entities/member.entity';
 import { MembersService } from 'src/members/services/members.service';
 import { CreateMessageDto } from '../dtos/create-message.dto';
@@ -15,7 +15,11 @@ export class MessagesService {
   ) { }
 
   public async findById(id: string): Promise<Message> {
-    return this.messagesRepository.findById(id);
+    const message = await this.messagesRepository.findById(id);
+
+    if (!message) throw new NotFoundException();
+
+    return message;
   }
 
   public async findByChat(chat: string): Promise<Message[]> {
@@ -31,7 +35,11 @@ export class MessagesService {
   }
 
   public async updateById(id: string, dto: UpdateMessageDto): Promise<Message> {
-    return this.messagesRepository.updateById(id, dto);
+    const message = await this.messagesRepository.updateById(id, dto);
+
+    if (!message) throw new NotFoundException();
+
+    return message;
   }
 
   public async deleteById(id: string): Promise<Message> {

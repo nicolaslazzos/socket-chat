@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from 'src/auth/entities/user.entity';
 import { CreateMemberDto } from '../dtos/create-member.dto';
 import { UpdateMemberDto } from '../dtos/update-member.dto';
@@ -23,7 +23,11 @@ export class MembersService {
   }
 
   public async findById(id: string): Promise<Member> {
-    return this.membersRepository.findById(id);
+    const member = await this.membersRepository.findById(id);
+
+    if (!member) throw new NotFoundException();
+
+    return member;
   }
 
   public async findByChat(chat: string): Promise<Member[]> {
@@ -35,7 +39,11 @@ export class MembersService {
   }
 
   public async findByChatAndUser(chat: string, user: string): Promise<Member> {
-    return this.membersRepository.findByChatAndUser(chat, user);
+    const member = await this.membersRepository.findByChatAndUser(chat, user);
+
+    if (!member) throw new NotFoundException();
+
+    return member;
   }
 
   public async findByChatAndUsers(chat: string, users: string[]): Promise<Member[]> {
@@ -43,7 +51,11 @@ export class MembersService {
   }
 
   public async updateById(id: string, dto: UpdateMemberDto): Promise<Member> {
-    return this.membersRepository.updateById(id, dto);
+    const member = await this.membersRepository.updateById(id, dto);
+
+    if (!member) throw new NotFoundException();
+
+    return member;
   }
 
   public async deleteById(id: string): Promise<Member> {

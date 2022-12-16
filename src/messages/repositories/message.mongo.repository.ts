@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateMessageDto } from '../dtos/create-message.dto';
@@ -25,9 +25,7 @@ export class MessageMongoRepository extends MessageRepository {
   async findById(id: string): Promise<Message> {
     const message = await this.messageModel.findOne({ _id: id, status: { $ne: MessageStatus.DELETED } }).populate({ path: 'member', populate: { path: 'user', select: 'username' } }).populate({ path: 'chat' });
 
-    if (!message) throw new NotFoundException();
-
-    return message.toEntity();
+    return message ? message.toEntity() : null;
   }
 
   async findByUser(user: string): Promise<Message[]> {
@@ -45,8 +43,6 @@ export class MessageMongoRepository extends MessageRepository {
   async updateById(id: string, dto: UpdateMessageDto): Promise<Message> {
     const message = await this.messageModel.findOneAndUpdate({ _id: id, status: { $ne: MessageStatus.DELETED } }, dto, { new: true });
 
-    if (!message) throw new NotFoundException();
-
-    return message.toEntity();
+    return message ? message.toEntity() : null;
   }
 }
