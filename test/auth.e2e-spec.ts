@@ -49,6 +49,17 @@ describe('Auth', () => {
       });
     });
 
+    describe(`when sending an username that doesn't meet the requirements`, () => {
+      it(`should throw a bad request exception`, async () => {
+        const dto: AuthCredentialsDto = { username: 'some_very_long_username', password: 'Password123!' };
+
+        return request(app.getHttpServer())
+          .post('/auth/signup')
+          .send(dto)
+          .expect(HttpStatus.BAD_REQUEST);
+      });
+    });
+
     describe(`when sending a password that doesn't meet the requirements`, () => {
       it(`should throw a bad request exception`, async () => {
         const dto: AuthCredentialsDto = { username: 'some_username', password: 'weak_password' };
@@ -75,13 +86,13 @@ describe('Auth', () => {
     });
 
     describe(`when sending a non-existing username`, () => {
-      it(`should throw a bad request exception`, async () => {
-        const dto: AuthCredentialsDto = { username: 'non_existing_username', password: 'Password123!' };
+      it(`should throw an unauthorized exception`, async () => {
+        const dto: AuthCredentialsDto = { username: 'wrong_username', password: 'Password123!' };
 
         return request(app.getHttpServer())
           .post('/auth/signin')
           .send(dto)
-          .expect(HttpStatus.BAD_REQUEST);
+          .expect(HttpStatus.UNAUTHORIZED);
       });
     });
 
