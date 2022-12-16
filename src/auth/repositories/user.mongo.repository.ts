@@ -25,8 +25,6 @@ export class UserMongoRepository extends UserRepository {
   async findByUsername(username: string): Promise<User> {
     const user = await this.userModel.findOne({ username });
 
-    if (!user) throw new NotFoundException();
-
-    return user.toEntity();
+    return user ? user.toEntity() : null;
   }
 }

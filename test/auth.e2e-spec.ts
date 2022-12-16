@@ -74,7 +74,7 @@ describe('Auth', () => {
       });
     });
 
-    describe(`when sending a non existing username`, () => {
+    describe(`when sending a non-existing username`, () => {
       it(`should throw a bad request exception`, async () => {
         const dto: AuthCredentialsDto = { username: 'non_existing_username', password: 'Password123!' };
 

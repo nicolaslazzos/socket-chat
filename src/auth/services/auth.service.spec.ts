@@ -76,7 +76,7 @@ describe('AuthService', () => {
       });
     });
 
-    describe('when sending a non existing username', () => {
+    describe('when sending a non-existing username', () => {
       it('should throw an unauthorized exception', async () => {
         jest.spyOn(userRepository, 'findByUsername').mockResolvedValueOnce(null);
 

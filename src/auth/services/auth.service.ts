@@ -14,9 +14,7 @@ export class AuthService {
   ) { }
 
   async signUp(dto: AuthCredentialsDto): Promise<User> {
-    let user: User;
-
-    try { user = await this.usersRepository.findByUsername(dto.username); } catch { }
+    const user = await this.usersRepository.findByUsername(dto.username);
 
     if (user) throw new ConflictException();
 
@@ -47,7 +45,7 @@ export class AuthService {
   async validate(payload: JwtPayload): Promise<User> {
     const { username } = payload;
 
-    const user: User = await this.usersRepository.findByUsername(username);
+    const user = await this.usersRepository.findByUsername(username);
 
     if (!user) throw new UnauthorizedException();
 
