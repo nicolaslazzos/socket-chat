@@ -75,7 +75,7 @@ export class MessagesGateway {
     await this.emitToChat(message.chat, 'update_message_response', message);
   }
 
-  @Roles(MemberRole.OWNER)
+  @Roles(MemberRole.ADMIN)
   @UseGuards(WsAuthGuard, RolesGuard)
   @SubscribeMessage('delete_message')
   async handleDeleteMessage(@MessageBody('message') id: string) {
