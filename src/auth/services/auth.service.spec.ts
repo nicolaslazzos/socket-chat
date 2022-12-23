@@ -38,11 +38,11 @@ describe('AuthService', () => {
 
         const user = userStub();
 
-        const dto: AuthCredentialsDto = { username: 'some_non_existing_username', password: 'some_password' };
+        const dto: AuthCredentialsDto = { username: user.username, password: user.password };
 
         const result = await authService.signUp(dto);
 
-        expect(result).toEqual(user);
+        expect(result.username).toEqual(user.username);
       });
     });
 
@@ -50,7 +50,7 @@ describe('AuthService', () => {
       it('should throw a conflict exception', async () => {
         const user = userStub();
 
-        const dto: AuthCredentialsDto = { username: user.username, password: 'some_password' };
+        const dto: AuthCredentialsDto = { username: user.username, password: user.password };
 
         const promise = authService.signUp(dto);
 
@@ -68,7 +68,7 @@ describe('AuthService', () => {
       it('should generate an access token', async () => {
         const user = userStub();
 
-        const dto: AuthCredentialsDto = { username: user.username, password: 'some_password' };
+        const dto: AuthCredentialsDto = { username: user.username, password: user.password };
 
         const result = await authService.signIn(dto);
 
@@ -110,7 +110,7 @@ describe('AuthService', () => {
 
         const result = await authService.validate(payload);
 
-        expect(result).toEqual(user);
+        expect(result.username).toEqual(user.username);
       });
     });
 

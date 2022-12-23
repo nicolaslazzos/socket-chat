@@ -47,9 +47,9 @@ describe('Chats', () => {
     // initialize at least two users
     authService = app.get<AuthService>(AuthService);
 
-    const { username, password } = userStub({ hashed: false });
+    const { username, password } = userStub({ name: 'some' });
 
-    users = [userStub({ hashed: false }), userStub({ name: 'another', hashed: false })];
+    users = [userStub({ name: 'some' }), userStub({ name: 'other' })];
 
     users = await Promise.all(users.map(({ username, password }) => authService.signUp({ username, password })));
 
