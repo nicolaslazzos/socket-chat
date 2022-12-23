@@ -28,6 +28,11 @@ export abstract class ModelMock<T> {
     return this;
   }
 
+  findOneAndUpdate(): ModelMock<T> {
+    this.then = (callback: (result: T | T[]) => T | T[]) => callback(this.stub);
+    return this;
+  }
+
   updateOne(): ModelMock<T> {
     return this;
   }
