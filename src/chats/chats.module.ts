@@ -7,7 +7,7 @@ import { ChatMongoRepository } from './repositories/chat.mongo.repository';
 import { ChatsService } from './services/chats.service';
 import { AuthModule } from '../auth/auth.module';
 import { MembersModule } from '../members/members.module';
-import { MessagesModule } from 'src/messages/messages.module';
+import { MessagesModule } from '../messages/messages.module';
 
 @Module({
   providers: [{ provide: ChatRepository.name, useClass: ChatMongoRepository }, ChatsService],

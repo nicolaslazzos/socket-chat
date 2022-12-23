@@ -2,7 +2,7 @@ import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 import { Message as MessageEntity, MessageStatus } from '../entities/message.entity';
 import { Chat } from '../../chats/models/chat.model';
-import { Member } from 'src/members/models/member.model';
+import { Member } from '../../members/models/member.model';
 
 @Schema()
 export class Message extends Document {

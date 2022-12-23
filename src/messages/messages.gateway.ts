@@ -5,19 +5,19 @@ import { Cache } from 'cache-manager';
 import { CreateMessageDto } from './dtos/create-message.dto';
 import { GetUser } from '../auth/get-user.decorator';
 import { User } from '../auth/entities/user.entity';
-import { WsAuthGuard } from 'src/auth/ws-auth.guard';
-import { MembersService } from 'src/members/services/members.service';
-import { RolesGuard } from 'src/common/role.guard';
-import { Roles } from 'src/common/role.decorator';
-import { MemberRole } from 'src/members/entities/member.entity';
+import { WsAuthGuard } from '../auth/ws-auth.guard';
+import { MembersService } from '../members/services/members.service';
+import { RolesGuard } from '../common/role.guard';
+import { Roles } from '../common/role.decorator';
+import { MemberRole } from '../members/entities/member.entity';
 import { MessagesService } from './services/messages.service';
 import { UpdateMessageDto } from './dtos/update-message.dto';
-import { Chat } from 'src/chats/entities/chat.entity';
+import { Chat } from '../chats/entities/chat.entity';
 
 @WebSocketGateway()
 export class MessagesGateway {
   constructor(
-    @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
+    // @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
     private readonly messagesService: MessagesService,
     private readonly membersService: MembersService,
   ) { }

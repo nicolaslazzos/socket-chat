@@ -1,10 +1,10 @@
 import { Controller, Post, Get, Patch, Delete, Body, Query, Param, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { User } from 'src/auth/entities/user.entity';
-import { GetUser } from 'src/auth/get-user.decorator';
-import { Roles } from 'src/common/role.decorator';
-import { RolesGuard } from 'src/common/role.guard';
-import { MemberRole } from 'src/members/entities/member.entity';
+import { User } from '../../auth/entities/user.entity';
+import { GetUser } from '../../auth/get-user.decorator';
+import { Roles } from '../../common/role.decorator';
+import { RolesGuard } from '../../common/role.guard';
+import { MemberRole } from '../../members/entities/member.entity';
 import { CreateMessageDto } from '../dtos/create-message.dto';
 import { UpdateMessageDto } from '../dtos/update-message.dto';
 import { Message, MessageStatus } from '../entities/message.entity';

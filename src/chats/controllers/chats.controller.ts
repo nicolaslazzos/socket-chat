@@ -1,7 +1,7 @@
 import { Controller, Post, Body, Get, Patch, Delete, Param, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../../auth/entities/user.entity';
-import { GetUser } from 'src/auth/get-user.decorator';
+import { GetUser } from '../../auth/get-user.decorator';
 import { CreateChatDto } from '../dtos/create-chat.dto';
 import { Chat } from '../entities/chat.entity';
 import { ChatsService } from '../services/chats.service';

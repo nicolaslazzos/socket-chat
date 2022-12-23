@@ -1,5 +1,5 @@
 import { Chat } from "../../chats/entities/chat.entity";
-import { Member } from "src/members/entities/member.entity";
+import { Member } from "../../members/entities/member.entity";
 
 export enum MessageStatus {
   ACTIVE = 'active',

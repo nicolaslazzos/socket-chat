@@ -1,6 +1,6 @@
 import { Inject, Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
-import { MemberStatus } from 'src/members/entities/member.entity';
-import { MembersService } from 'src/members/services/members.service';
+import { MemberStatus } from '../../members/entities/member.entity';
+import { MembersService } from '../../members/services/members.service';
 import { CreateMessageDto } from '../dtos/create-message.dto';
 import { UpdateMessageDto } from '../dtos/update-message.dto';
 import { Message, MessageStatus } from '../entities/message.entity';

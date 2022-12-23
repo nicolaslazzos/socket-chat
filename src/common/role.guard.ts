@@ -1,12 +1,12 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Socket } from 'socket.io';
-import { Chat } from 'src/chats/entities/chat.entity';
+import { Chat } from '../chats/entities/chat.entity';
 import { Member, MemberRole } from '../members/entities/member.entity';
 import { ROLES_KEY, ROLES_VALUES } from './role.decorator';
 import { MembersService } from '../members/services/members.service';
-import { MessagesService } from 'src/messages/services/messages.service';
-import { User } from 'src/auth/entities/user.entity';
+import { MessagesService } from '../messages/services/messages.service';
+import { User } from '../auth/entities/user.entity';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
