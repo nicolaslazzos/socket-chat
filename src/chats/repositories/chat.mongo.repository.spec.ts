@@ -31,7 +31,7 @@ describe('ChatMongoRepository', () => {
       const dto: CreateChatDto = {
         type: chat.type,
         name: chat.name,
-        creator: chat.created,
+        creator: chat.creator as string,
         members: []
       };
 
