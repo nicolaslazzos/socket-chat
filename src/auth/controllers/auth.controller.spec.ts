@@ -9,7 +9,6 @@ jest.mock('../services/auth.service');
 
 describe('AuthController', () => {
   let authController: AuthController;
-  let authService: AuthService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -18,7 +17,6 @@ describe('AuthController', () => {
     }).compile();
 
     authController = moduleRef.get<AuthController>(AuthController);
-    authService = moduleRef.get<AuthService>(AuthService);
 
     jest.clearAllMocks();
   });
