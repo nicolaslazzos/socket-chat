@@ -20,7 +20,7 @@ export class ChatsService {
       dto.members.push({ role: MemberRole.ADMIN, user: dto.creator });
     }
 
-    if (dto.type === ChatType.PRIVATE && dto.members.length > 2) throw new BadRequestException();
+    if (dto.type === ChatType.DIRECT && dto.members.length > 2) throw new BadRequestException();
 
     const chat = await this.chatRepository.create(dto);
 

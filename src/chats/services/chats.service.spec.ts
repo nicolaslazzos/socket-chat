@@ -35,7 +35,7 @@ describe('ChatsService', () => {
         const chat = chatStub();
 
         const dto: CreateChatDto = {
-          type: ChatType.PRIVATE,
+          type: ChatType.DIRECT,
           name: 'some_name',
           creator: 'creator_user_id',
           members: [
@@ -50,10 +50,10 @@ describe('ChatsService', () => {
       });
     });
 
-    describe('when sending a dto with type private and more than two members', () => {
+    describe('when sending a dto with type direct and more than two members', () => {
       it('should throw a bad request exception', async () => {
         const dto: CreateChatDto = {
-          type: ChatType.PRIVATE,
+          type: ChatType.DIRECT,
           name: 'some_name',
           creator: 'creator_user_id',
           members: [
