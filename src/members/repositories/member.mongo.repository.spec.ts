@@ -98,7 +98,7 @@ describe('MmebersMongoRepository', () => {
   });
 
   describe('findByChatAndUsers', () => {
-    it('should return the member with the specified chat id and user ids', async () => {
+    it('should return the member with the specified chat id and users ids', async () => {
       const member = memberStub();
 
       const result = await memberRepository.findByChatAndUsers('some_chat_id', ['some_user_id']);
