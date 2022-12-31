@@ -12,6 +12,8 @@ import { MessagesService } from '../../messages/services/messages.service';
 import { AuthStrategy } from '../../auth/constants';
 
 jest.mock('../services/chats.service');
+jest.mock('../../members/services/members.service');
+jest.mock('../../messages/services/messages.service');
 
 describe('ChatsController', () => {
   let chatsController: ChatsController;
@@ -21,11 +23,7 @@ describe('ChatsController', () => {
       // i know i should not use imports in testing modules, but if not, it throws an error
       imports: [PassportModule.register({ defaultStrategy: AuthStrategy.JWT })],
       controllers: [ChatsController],
-      providers: [
-        ChatsService,
-        { provide: MembersService, useClass: jest.fn() },
-        { provide: MessagesService, useClass: jest.fn() }
-      ],
+      providers: [ChatsService, MembersService, MessagesService],
     }).compile();
 
     chatsController = moduleRef.get<ChatsController>(ChatsController);

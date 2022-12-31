@@ -14,6 +14,14 @@ export class MessagesService {
     private readonly membersService: MembersService
   ) { }
 
+  public async create(user: string, dto: CreateMessageDto): Promise<Message> {
+    const member = await this.membersService.findByChatAndUser(dto.chat, user);
+
+    if (member.status !== MemberStatus.ACTIVE) throw new ForbiddenException();
+
+    return this.messagesRepository.create({ ...dto, member: member.id });
+  }
+
   public async findById(id: string): Promise<Message> {
     const message = await this.messagesRepository.findById(id);
 
@@ -24,14 +32,6 @@ export class MessagesService {
 
   public async findByChat(chat: string): Promise<Message[]> {
     return this.messagesRepository.findByChat(chat);
-  }
-
-  public async create(user: string, dto: CreateMessageDto): Promise<Message> {
-    const member = await this.membersService.findByChatAndUser(dto.chat, user);
-
-    if (member.status !== MemberStatus.ACTIVE) throw new ForbiddenException();
-
-    return this.messagesRepository.create({ ...dto, member: member.id });
   }
 
   public async updateById(id: string, dto: UpdateMessageDto): Promise<Message> {

@@ -9,6 +9,7 @@ import { ChatsService } from '../services/chats.service';
 import { chatStub } from '../test/chat.stub';
 
 jest.mock('../repositories/chat.repository');
+jest.mock('../../members/services/members.service');
 
 describe('ChatsService', () => {
   let chatsService: ChatsService;
@@ -18,7 +19,7 @@ describe('ChatsService', () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         ChatsService,
-        { provide: MembersService, useValue: { create: jest.fn(), findByUser: jest.fn().mockResolvedValue([]) } },
+        MembersService,
         { provide: ChatRepository.name, useClass: ChatRepository as any },
       ],
     }).compile();
