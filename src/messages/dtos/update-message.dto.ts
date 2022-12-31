@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsDate, IsOptional, IsString } from 'class-validator';
 import { MessageStatus } from '../entities/message.entity';
 
 export class UpdateMessageDto {
@@ -9,4 +9,8 @@ export class UpdateMessageDto {
   @IsOptional()
   @IsString()
   text?: string;
+
+  @IsOptional()
+  @IsDate()
+  deletedAt?: Date;
 }

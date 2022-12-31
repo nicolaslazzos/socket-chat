@@ -58,6 +58,6 @@ export class ChatsService {
   }
 
   async deleteById(id: string): Promise<Chat> {
-    return this.updateById(id, { status: ChatStatus.DELETED });
+    return this.updateById(id, { status: ChatStatus.DELETED, deletedAt: new Date() });
   }
 }

@@ -59,6 +59,6 @@ export class MembersService {
   }
 
   public async deleteById(id: string): Promise<Member> {
-    return this.updateById(id, { status: MemberStatus.DELETED });
+    return this.updateById(id, { status: MemberStatus.DELETED, deletedAt: new Date() });
   }
 }

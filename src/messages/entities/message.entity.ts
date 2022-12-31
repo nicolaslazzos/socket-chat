@@ -12,8 +12,9 @@ export class Message {
   chat: string | Chat;
   member: string | Member;
   text: string;
-  created: string;
-  updated: string;
+  deletedAt?: string;
+  createdAt: string;
+  updatedAt: string;
 
   constructor(partial: Partial<Message>) {
     Object.assign(this, partial);

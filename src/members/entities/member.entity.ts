@@ -19,8 +19,9 @@ export class Member {
   status: MemberStatus;
   user: string | User;
   chat: string | Chat;
-  created: string;
-  updated: string;
+  deletedAt?: string;
+  createdAt: string;
+  updatedAt: string;
 
   constructor(partial: Partial<Member>) {
     Object.assign(this, partial);

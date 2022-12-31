@@ -3,7 +3,7 @@ import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 import { Chat as ChatEntity, ChatStatus, ChatType } from '../entities/chat.entity';
 import { User } from '../../auth/models/user.model';
 
-@Schema()
+@Schema({ timestamps: true })
 export class Chat extends Document {
   @Prop({ enum: ChatType, required: true })
   type: ChatType;
@@ -17,11 +17,8 @@ export class Chat extends Document {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: User.name, required: true })
   creator: User;
 
-  @Prop({ default: Date.now })
-  updated: Date;
-
-  @Prop({ default: Date.now })
-  created: Date;
+  @Prop({ required: false })
+  updatedAt: Date;
 
   public toEntity: () => ChatEntity;
 }

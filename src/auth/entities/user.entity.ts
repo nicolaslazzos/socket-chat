@@ -5,6 +5,9 @@ export class User {
   username: string;
   @Exclude()
   password: string;
+  deletedAt?: string;
+  createdAt: string;
+  updatedAt: string;
 
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);

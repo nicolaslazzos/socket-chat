@@ -7,7 +7,7 @@ export const chatStub = (): Chat => {
     status: ChatStatus.ACTIVE,
     name: `some_name`,
     creator: `some_creator`,
-    updated: new Date('2022-12-23').toISOString(),
-    created: new Date('2022-12-23').toISOString()
+    updatedAt: new Date('2022-12-23').toISOString(),
+    createdAt: new Date('2022-12-23').toISOString()
   });
 };

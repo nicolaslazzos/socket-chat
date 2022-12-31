@@ -7,7 +7,7 @@ export const memberStub = (): Member => {
     status: MemberStatus.ACTIVE,
     user: `some_user_id`,
     chat: 'some_chat_id',
-    updated: new Date('2022-12-23').toISOString(),
-    created: new Date('2022-12-23').toISOString()
+    updatedAt: new Date('2022-12-23').toISOString(),
+    createdAt: new Date('2022-12-23').toISOString()
   });
 };

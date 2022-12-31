@@ -7,7 +7,7 @@ export const messageStub = (): Message => {
     member: `some_member_id`,
     chat: 'some_chat_id',
     text: 'this is a message',
-    updated: new Date('2022-12-23').toISOString(),
-    created: new Date('2022-12-23').toISOString()
+    updatedAt: new Date('2022-12-23').toISOString(),
+    createdAt: new Date('2022-12-23').toISOString()
   });
 };

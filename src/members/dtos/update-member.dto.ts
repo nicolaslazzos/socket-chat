@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsEnum, IsOptional, IsString } from 'class-validator';
 import { MemberRole, MemberStatus } from '../entities/member.entity';
 
 export class UpdateMemberDto {
@@ -11,4 +11,8 @@ export class UpdateMemberDto {
   @IsString()
   @IsEnum(MemberStatus)
   status?: MemberStatus;
+
+  @IsOptional()
+  @IsDate()
+  deletedAt?: Date;
 }

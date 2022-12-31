@@ -4,7 +4,7 @@ import { Message as MessageEntity, MessageStatus } from '../entities/message.ent
 import { Chat } from '../../chats/models/chat.model';
 import { Member } from '../../members/models/member.model';
 
-@Schema()
+@Schema({ timestamps: true })
 export class Message extends Document {
   @Prop({ enum: MessageStatus, default: MessageStatus.ACTIVE, required: true })
   status: MessageStatus;
@@ -18,11 +18,8 @@ export class Message extends Document {
   @Prop({ required: true })
   text: string;
 
-  @Prop({ default: Date.now })
-  updated: Date;
-
-  @Prop({ default: Date.now })
-  created: Date;
+  @Prop({ required: false })
+  deletedAt: Date;
 
   public toEntity: () => MessageEntity;
 }

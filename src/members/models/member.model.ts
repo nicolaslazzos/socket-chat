@@ -4,7 +4,7 @@ import { Member as MemberEntity, MemberRole, MemberStatus } from '../entities/me
 import { User } from '../../auth/models/user.model';
 import { Chat } from '../../chats/models/chat.model';
 
-@Schema()
+@Schema({ timestamps: true })
 export class Member extends Document {
   @Prop({ enum: MemberRole, default: MemberRole.MEMBER, required: true })
   role: MemberRole;
@@ -18,11 +18,8 @@ export class Member extends Document {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: User.name, required: true })
   user: User;
 
-  @Prop({ default: Date.now })
-  updated: Date;
-
-  @Prop({ default: Date.now })
-  created: Date;
+  @Prop({ required: false })
+  deletedAt: Date;
 
   public toEntity: () => MemberEntity;
 }
