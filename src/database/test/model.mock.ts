@@ -41,6 +41,11 @@ export abstract class ModelMock<T> {
     return this;
   }
 
+  insertMany(): ModelMock<T> {
+    this.then = (callback: (result: T | T[]) => T | T[]) => callback([this.stub]);
+    return this;
+  }
+
   select(): ModelMock<T> {
     return this;
   }
