@@ -18,7 +18,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "check:circular": "madge --circular src/main.ts"
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
@@ -66,6 +67,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "28.1.2",
+    "madge": "^5.0.1",
     "mongodb-memory-server": "^8.10.2",
     "prettier": "^2.3.2",
     "source-map-support": "^0.5.20",
