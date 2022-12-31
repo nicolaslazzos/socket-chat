@@ -1,7 +1,7 @@
 import { memberStub } from "../../test/member.stub";
 
 export const MembersService = jest.fn().mockReturnValue({
-  create: jest.fn().mockResolvedValue(memberStub()),
+  create: jest.fn().mockResolvedValue([memberStub()]),
   findById: jest.fn().mockResolvedValue(memberStub()),
   findByChat: jest.fn().mockResolvedValue([memberStub()]),
   findByUser: jest.fn().mockResolvedValue([memberStub()]),
