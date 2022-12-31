@@ -18,16 +18,12 @@ export class AuthService {
 
     if (user) throw new ConflictException();
 
-    try {
-      const { username, password } = dto;
+    const { username, password } = dto;
 
-      const salt = await bcrypt.genSalt();
-      const hashed = await bcrypt.hash(password, salt);
+    const salt = await bcrypt.genSalt();
+    const hashed = await bcrypt.hash(password, salt);
 
-      return this.usersRepository.create({ username, password: hashed });
-    } catch (e) {
-      throw new InternalServerErrorException();
-    }
+    return this.usersRepository.create({ username, password: hashed });
   }
 
   async signIn(dto: AuthCredentialsDto): Promise<{ access_token: string; }> {
