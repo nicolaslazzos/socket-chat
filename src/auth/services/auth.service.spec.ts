@@ -28,6 +28,8 @@ describe('AuthService', () => {
     userRepository = moduleRef.get<UserRepository>(UserRepository.name);
     jwtService = moduleRef.get<JwtService>(JwtService);
 
+    jest.spyOn(jwtService, 'sign').mockReturnValue(accessTokenStub().access_token);
+
     jest.clearAllMocks();
   });
 
@@ -43,6 +45,8 @@ describe('AuthService', () => {
         const result = await authService.signUp(dto);
 
         expect(result.username).toEqual(user.username);
+        expect(userRepository.findByUsername).toHaveBeenCalledWith(dto.username);
+        expect(userRepository.create).toHaveBeenCalled();
       });
     });
 
@@ -55,15 +59,12 @@ describe('AuthService', () => {
         const promise = authService.signUp(dto);
 
         expect(promise).rejects.toThrow(ConflictException);
+        expect(userRepository.findByUsername).toHaveBeenCalledWith(dto.username);
       });
     });
   });
 
   describe('signIn', () => {
-    beforeEach(() => {
-      jest.spyOn(jwtService, 'sign').mockReturnValue(accessTokenStub().access_token);
-    });
-
     describe('when sending an existing username with a valid password', () => {
       it('should generate an access token', async () => {
         const user = userStub();
@@ -73,6 +74,8 @@ describe('AuthService', () => {
         const result = await authService.signIn(dto);
 
         expect(result).toEqual(accessTokenStub());
+        expect(userRepository.findByUsername).toHaveBeenCalledWith(dto.username);
+        expect(jwtService.sign).toHaveBeenCalledWith({ username: dto.username });
       });
     });
 
@@ -85,6 +88,7 @@ describe('AuthService', () => {
         const promise = authService.signIn(dto);
 
         expect(promise).rejects.toThrow(UnauthorizedException);
+        expect(userRepository.findByUsername).toHaveBeenCalledWith(dto.username);
       });
     });
 
@@ -97,6 +101,7 @@ describe('AuthService', () => {
         const promise = authService.signIn(dto);
 
         expect(promise).rejects.toThrow(UnauthorizedException);
+        expect(userRepository.findByUsername).toHaveBeenCalledWith(dto.username);
       });
     });
   });
@@ -111,6 +116,7 @@ describe('AuthService', () => {
         const result = await authService.validate(payload);
 
         expect(result.username).toEqual(user.username);
+        expect(userRepository.findByUsername).toHaveBeenCalledWith(payload.username);
       });
     });
 
@@ -123,6 +129,7 @@ describe('AuthService', () => {
         const promise = authService.validate(payload);
 
         expect(promise).rejects.toThrow(UnauthorizedException);
+        expect(userRepository.findByUsername).toHaveBeenCalledWith(payload.username);
       });
     });
   });

@@ -9,6 +9,7 @@ jest.mock('../services/auth.service');
 
 describe('AuthController', () => {
   let authController: AuthController;
+  let authService: AuthService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -17,6 +18,7 @@ describe('AuthController', () => {
     }).compile();
 
     authController = moduleRef.get<AuthController>(AuthController);
+    authService = moduleRef.get<AuthService>(AuthService);
 
     jest.clearAllMocks();
   });
@@ -30,6 +32,7 @@ describe('AuthController', () => {
       const result = await authController.signUp(dto);
 
       expect(result).toEqual(user);
+      expect(authService.signUp).toHaveBeenCalledWith(dto);
     });
   });
 
@@ -42,6 +45,7 @@ describe('AuthController', () => {
       const result = await authController.signIn(dto);
 
       expect(result).toEqual(accessTokenStub());
+      expect(authService.signIn).toHaveBeenCalledWith(dto);
     });
   });
 });

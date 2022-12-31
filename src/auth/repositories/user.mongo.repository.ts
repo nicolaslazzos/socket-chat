@@ -1,10 +1,9 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { AuthCredentialsDto } from '../dtos/auth-credentials.dto';
 import { User as UserModel } from '../models/user.model';
 import { User } from '../entities/user.entity';
-import * as bcrypt from 'bcrypt';
 import { UserRepository } from './user.repository';
 
 @Injectable()
