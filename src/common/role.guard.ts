@@ -21,13 +21,11 @@ export class RolesGuard implements CanActivate {
 
     if (!requiredRoles?.length) return true;
 
+    let request = context.switchToHttp().getRequest();
     let messageId: string;
     let memberId: string;
     let chatId: string;
-
-    let isOwner: boolean = false;
-
-    let request = context.switchToHttp().getRequest();
+    let owner: boolean;
 
     const user = request.user.id;
 
@@ -42,12 +40,12 @@ export class RolesGuard implements CanActivate {
     if (messageId) {
       const message = await this.messagesService.findById(messageId);
 
-      isOwner = ((message?.member as Member)?.user as User).id === user;
+      owner = ((message?.member as Member)?.user as User).id === user;
       chatId = (message?.chat as Chat)?.id;
     } else if (memberId) {
       const member = await this.membersService.findById(memberId);
 
-      isOwner = (member?.user as User)?.id === user;
+      owner = (member?.user as User)?.id === user;
       chatId = (member?.chat as Chat)?.id;
     }
 
@@ -55,9 +53,9 @@ export class RolesGuard implements CanActivate {
 
     const member = await this.membersService.findByChatAndUser(chatId, user);
 
-    isOwner = !isOwner ? (member.chat as Chat).creator === user : isOwner;
+    owner = owner ?? (member.chat as Chat).creator === user;
 
-    if (isOwner) member.role = MemberRole.OWNER;
+    if (owner) member.role = MemberRole.OWNER;
 
     return requiredRoles.some((role) => ROLES_VALUES[member.role] >= ROLES_VALUES[role]);
   }
