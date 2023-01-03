@@ -43,7 +43,7 @@ export class MessagesGateway {
   @UseGuards(WsAuthGuard, RolesGuard)
   @SubscribeMessage('new_message')
   async handleMessage(@GetUser() user: User, @MessageBody() dto: CreateMessageDto) {
-    const message = await this.messagesService.create(user.id, dto);
+    const message = await this.messagesService.create({ ...dto, user: user.id });
 
     await this.emitToChat(message.chat, 'new_message_response', message);
   }

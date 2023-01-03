@@ -17,7 +17,7 @@ export class ChatsController {
 
   @Post()
   createChat(@Body() dto: CreateChatDto, @GetUser() user: User): Promise<Chat> {
-    return this.chatsService.create({ ...dto, creator: user.id });
+    return this.chatsService.create({ ...dto, createdBy: user.id });
   }
 
   @Get()

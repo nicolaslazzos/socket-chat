@@ -11,13 +11,17 @@ export class CreateChatDto {
   @IsOptional()
   @IsString()
   name?: string;
-  
+
+  @IsOptional()
+  @ArrayNotEmpty()
+  @IsString({ each: true })
+  users: string[];
+
   @IsOptional()
   @IsString()
-  creator?: string;
+  owner?: string;
 
-  @ArrayNotEmpty()
-  @ValidateNested({ each: true })
-  @Type(() => CreateMemberDto)
-  members: CreateMemberDto[];
+  @IsOptional()
+  @IsString()
+  createdBy?: string;
 }

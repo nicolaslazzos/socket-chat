@@ -40,20 +40,20 @@ export class RolesGuard implements CanActivate {
     if (messageId) {
       const message = await this.messagesService.findById(messageId);
 
-      owner = ((message?.member as Member)?.user as User).id === user;
-      chatId = (message?.chat as Chat)?.id;
+      owner = (message?.user as User).id === user;
+      chatId = message?.chat as string;
     } else if (memberId) {
       const member = await this.membersService.findById(memberId);
 
       owner = (member?.user as User)?.id === user;
-      chatId = (member?.chat as Chat)?.id;
+      chatId = member?.chat as string;
     }
 
     if (!chatId) return false;
 
     const member = await this.membersService.findByChatAndUser(chatId, user);
 
-    owner = owner ?? (member.chat as Chat).creator === user;
+    owner = owner ?? (member.chat as Chat).owner === user;
 
     if (owner) member.role = MemberRole.OWNER;
 

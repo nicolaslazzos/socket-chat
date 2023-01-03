@@ -1,14 +1,13 @@
 import { IsDate, IsOptional, IsString } from 'class-validator';
-import { MessageStatus } from '../entities/message.entity';
 
 export class UpdateMessageDto {
   @IsOptional()
   @IsString()
-  status?: MessageStatus;
+  text?: string;
 
   @IsOptional()
   @IsString()
-  text?: string;
+  deletedBy?: string;
 
   @IsOptional()
   @IsDate()

@@ -7,7 +7,7 @@ import { RolesGuard } from '../../common/role.guard';
 import { MemberRole } from '../../members/entities/member.entity';
 import { CreateMessageDto } from '../dtos/create-message.dto';
 import { UpdateMessageDto } from '../dtos/update-message.dto';
-import { Message, MessageStatus } from '../entities/message.entity';
+import { Message } from '../entities/message.entity';
 import { MessagesService } from '../services/messages.service';
 
 @Controller('messages')
@@ -19,7 +19,7 @@ export class MessagesController {
   @Roles(MemberRole.MEMBER)
   @UseGuards(AuthGuard(), RolesGuard)
   createMessage(@GetUser() user: User, @Body() dto: CreateMessageDto): Promise<Message> {
-    return this.messagesService.create(user.id, dto);
+    return this.messagesService.create({ ...dto, user: user.id });
   }
 
   @Get()
@@ -47,6 +47,6 @@ export class MessagesController {
   @Roles(MemberRole.ADMIN)
   @UseGuards(AuthGuard(), RolesGuard)
   deleteMessage(@Param('message') message: string): Promise<Message> {
-    return this.messagesService.updateById(message, { status: MessageStatus.DELETED });
+    return this.messagesService.deleteById(message);
   }
 }

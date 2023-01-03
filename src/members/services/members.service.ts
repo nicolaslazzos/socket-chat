@@ -2,7 +2,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '../../auth/entities/user.entity';
 import { CreateMemberDto } from '../dtos/create-member.dto';
 import { UpdateMemberDto } from '../dtos/update-member.dto';
-import { Member, MemberStatus } from '../entities/member.entity';
+import { Member } from '../entities/member.entity';
 import { MemberRepository } from '../repositories/member.repository';
 
 @Injectable()
@@ -59,6 +59,6 @@ export class MembersService {
   }
 
   public async deleteById(id: string): Promise<Member> {
-    return this.updateById(id, { status: MemberStatus.DELETED, deletedAt: new Date() });
+    return this.updateById(id, { deletedAt: new Date() });
   }
 }

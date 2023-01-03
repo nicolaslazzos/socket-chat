@@ -1,5 +1,5 @@
 import { IsDate, IsEnum, IsOptional, IsString } from 'class-validator';
-import { MemberRole, MemberStatus } from '../entities/member.entity';
+import { MemberRole } from '../entities/member.entity';
 
 export class UpdateMemberDto {
   @IsOptional()
@@ -9,8 +9,7 @@ export class UpdateMemberDto {
 
   @IsOptional()
   @IsString()
-  @IsEnum(MemberStatus)
-  status?: MemberStatus;
+  deletedBy?: string;
 
   @IsOptional()
   @IsDate()

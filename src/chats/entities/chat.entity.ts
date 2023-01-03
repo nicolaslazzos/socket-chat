@@ -6,17 +6,14 @@ export enum ChatType {
   PUBLIC = 'public'
 }
 
-export enum ChatStatus {
-  ACTIVE = 'active',
-  DELETED = 'deleted'
-}
-
 export class Chat {
   id: string;
   type: ChatType;
-  status: ChatStatus;
   name?: string;
-  creator: string | User;
+  users: string[] | User[];
+  owner?: string | User;
+  createdBy?: string | User;
+  deletedBy?: string | User;
   deletedAt?: string;
   createdAt: string;
   updatedAt: string;

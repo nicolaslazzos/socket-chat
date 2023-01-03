@@ -1,5 +1,5 @@
 import { IsEnum, IsString, IsOptional, IsDate } from 'class-validator';
-import { ChatStatus, ChatType } from '../entities/chat.entity';
+import { ChatType } from '../entities/chat.entity';
 
 export class UpdateChatDto {
   @IsOptional()
@@ -9,12 +9,11 @@ export class UpdateChatDto {
 
   @IsOptional()
   @IsString()
-  @IsEnum(ChatStatus)
-  status?: ChatStatus;
+  name?: string;
 
   @IsOptional()
   @IsString()
-  name?: string;
+  deletedBy?: string;
 
   @IsOptional()
   @IsDate()

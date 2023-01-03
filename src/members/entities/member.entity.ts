@@ -7,18 +7,14 @@ export enum MemberRole {
   MEMBER = 'member'
 }
 
-export enum MemberStatus {
-  ACTIVE = 'active',
-  MUTED = 'muted',
-  DELETED = 'deleted'
-}
-
 export class Member {
   id: string;
   role: MemberRole;
-  status: MemberStatus;
   user: string | User;
   chat: string | Chat;
+  muted: boolean;
+  createdBy?: string | User;
+  deletedBy?: string | User;
   deletedAt?: string;
   createdAt: string;
   updatedAt: string;

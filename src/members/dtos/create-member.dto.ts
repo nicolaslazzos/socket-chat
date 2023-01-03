@@ -12,4 +12,8 @@ export class CreateMemberDto {
 
   @IsString()
   user: string;
+
+  @IsOptional()
+  @IsString()
+  createdBy?: string;
 }
