@@ -5,7 +5,7 @@ import { GetUser } from '../../auth/get-user.decorator';
 import { CreateChatDto } from '../dtos/create-chat.dto';
 import { Chat } from '../entities/chat.entity';
 import { ChatsService } from '../services/chats.service';
-import { Roles } from '../../common/roles.decorator';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { MemberRole } from '../../members/entities/member.entity';
 import { UpdateChatDto } from '../dtos/update-chat.dto';
 import { ChatsRolesGuard } from '../chats-roles.guard';
@@ -42,7 +42,7 @@ export class ChatsController {
   @Delete('/:chat')
   @Roles(MemberRole.OWNER)
   @UseGuards(ChatsRolesGuard)
-  deleteChat(@Param('chat') id: string): Promise<Chat> {
-    return this.chatsService.deleteById(id);
+  deleteChat(@Param('chat') id: string, @GetUser() user: User): Promise<Chat> {
+    return this.chatsService.deleteById(id, { deletedBy: user.id });
   }
 }

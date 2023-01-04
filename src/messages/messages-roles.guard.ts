@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { MemberRole } from '../members/entities/member.entity';
 import { MembersService } from '../members/services/members.service';
 import { User } from '../auth/entities/user.entity';
-import { RolesGuard } from '../common/roles.guard';
+import { RolesGuard } from '../common/guards/roles.guard';
 import { MessagesService } from './services/messages.service';
 
 @Injectable()

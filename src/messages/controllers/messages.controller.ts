@@ -2,7 +2,7 @@ import { Controller, Post, Get, Patch, Delete, Body, Query, Param, UseGuards } f
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../../auth/entities/user.entity';
 import { GetUser } from '../../auth/get-user.decorator';
-import { Roles } from '../../common/roles.decorator';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { MemberRole } from '../../members/entities/member.entity';
 import { CreateMessageDto } from '../dtos/create-message.dto';
 import { UpdateMessageDto } from '../dtos/update-message.dto';
@@ -46,7 +46,7 @@ export class MessagesController {
   @Delete('/:message')
   @Roles(MemberRole.ADMIN)
   @UseGuards(MessagesRolesGuard)
-  deleteMessage(@Param('message') message: string): Promise<Message> {
-    return this.messagesService.deleteById(message);
+  deleteMessage(@Param('message') message: string, @GetUser() user: User): Promise<Message> {
+    return this.messagesService.deleteById(message, { deletedBy: user.id });
   }
 }

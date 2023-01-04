@@ -3,9 +3,11 @@ import { AuthGuard } from '@nestjs/passport';
 import { CreateMemberDto } from '../dtos/create-member.dto';
 import { MembersService } from '../services/members.service';
 import { Member, MemberRole } from '../entities/member.entity';
-import { Roles } from '../../common/roles.decorator';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { UpdateMemberDto } from '../dtos/update-member.dto';
 import { MembersRolesGuard } from '../members-roles.guard';
+import { GetUser } from '../../auth/get-user.decorator';
+import { User } from '../../auth/entities/user.entity';
 
 @Controller('members')
 @UseGuards(AuthGuard())
@@ -43,7 +45,7 @@ export class MembersController {
   @Delete('/:member')
   @Roles(MemberRole.ADMIN)
   @UseGuards(MembersRolesGuard)
-  deleteMember(@Param('member') member: string): Promise<Member> {
-    return this.membersService.deleteById(member);
+  deleteMember(@Param('member') member: string, @GetUser() user: User): Promise<Member> {
+    return this.membersService.deleteById(member, { deletedBy: user.id });
   }
 }

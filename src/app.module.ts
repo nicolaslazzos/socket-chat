@@ -7,7 +7,6 @@ import { AuthModule } from './auth/auth.module';
 import { configValidationSchema } from './config.schema';
 import { ChatsModule } from './chats/chats.module';
 import { MembersModule } from './members/members.module';
-import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -26,8 +25,7 @@ import { CommonModule } from './common/common.module';
     AuthModule,
     MessagesModule,
     ChatsModule,
-    MembersModule,
-    CommonModule,
+    MembersModule
   ]
 })
 export class AppModule { }

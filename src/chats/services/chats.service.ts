@@ -74,7 +74,7 @@ export class ChatsService {
     return chat;
   }
 
-  async deleteById(id: string): Promise<Chat> {
-    return this.updateById(id, { deletedAt: new Date() });
+  async deleteById(id: string, dto: UpdateChatDto = {}): Promise<Chat> {
+    return this.updateById(id, { ...dto, deletedAt: new Date() });
   }
 }
