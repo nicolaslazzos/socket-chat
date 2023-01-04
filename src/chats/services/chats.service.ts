@@ -63,9 +63,7 @@ export class ChatsService {
   }
 
   async findByUser(user: string): Promise<Chat[]> {
-    const members = await this.membersService.findByUser(user);
-
-    return this.chatRepository.findByIds(members.map(m => (m.chat as Chat).id));
+    return this.chatRepository.findByUser(user);
   }
 
   async updateById(id: string, dto: UpdateChatDto): Promise<Chat> {

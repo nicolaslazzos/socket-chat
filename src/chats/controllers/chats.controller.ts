@@ -5,10 +5,10 @@ import { GetUser } from '../../auth/get-user.decorator';
 import { CreateChatDto } from '../dtos/create-chat.dto';
 import { Chat } from '../entities/chat.entity';
 import { ChatsService } from '../services/chats.service';
-import { Roles } from '../../common/role.decorator';
-import { RolesGuard } from '../../common/role.guard';
+import { Roles } from '../../common/roles.decorator';
 import { MemberRole } from '../../members/entities/member.entity';
 import { UpdateChatDto } from '../dtos/update-chat.dto';
+import { ChatsRolesGuard } from '../chats-roles.guard';
 
 @Controller('chats')
 @UseGuards(AuthGuard())
@@ -27,21 +27,21 @@ export class ChatsController {
 
   @Get('/:chat')
   @Roles(MemberRole.MEMBER)
-  @UseGuards(RolesGuard)
+  @UseGuards(ChatsRolesGuard)
   getChat(@Param('chat') id: string): Promise<Chat> {
     return this.chatsService.findById(id);
   }
 
   @Patch('/:chat')
   @Roles(MemberRole.ADMIN)
-  @UseGuards(RolesGuard)
+  @UseGuards(ChatsRolesGuard)
   updateChat(@Param('chat') id: string, @Body() dto: UpdateChatDto): Promise<Chat> {
     return this.chatsService.updateById(id, dto);
   }
 
   @Delete('/:chat')
   @Roles(MemberRole.OWNER)
-  @UseGuards(RolesGuard)
+  @UseGuards(ChatsRolesGuard)
   deleteChat(@Param('chat') id: string): Promise<Chat> {
     return this.chatsService.deleteById(id);
   }

@@ -53,7 +53,7 @@ export class MemberMongoRepository extends MemberRepository {
   }
 
   async findByChatAndUsers(chat: string, users: string[]): Promise<Member[]> {
-    const members = await this.memberModel.find({ chat, user: { $in: users }, deletedAt: { $exists: false } }).populate('user', '-password').populate('chat');
+    const members = await this.memberModel.find({ chat, user: { $in: users }, deletedAt: { $exists: false } }).populate('user', '-password');
 
     return members.map((member) => member.toEntity());
   }

@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { MessagesGateway } from './messages.gateway';
 import { MessagesController } from './controllers/messages.controller';
 import { MessageRepository } from './repositories/message.repository';
@@ -10,7 +10,7 @@ import { MembersModule } from '../members/members.module';
 import { MessagesService } from './services/messages.service';
 
 @Module({
-  imports: [MongooseModule.forFeature([MessageModel]), AuthModule, forwardRef(() => MembersModule)],
+  imports: [MongooseModule.forFeature([MessageModel]), AuthModule, MembersModule],
   providers: [{ provide: MessageRepository.name, useClass: MessageMongoRepository }, MessagesGateway, MessagesService],
   controllers: [MessagesController],
   exports: [MessagesService]

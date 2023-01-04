@@ -28,8 +28,8 @@ export class ChatMongoRepository extends ChatRepository {
     return chat ? chat.toEntity() : null;
   }
 
-  async findByIds(ids: string[]): Promise<Chat[]> {
-    const chats = await this.chatModel.find({ _id: { $in: ids }, deletedAt: { $exists: false } }).populate('users owner createdBy', '-password');
+  async findByUser(user: string): Promise<Chat[]> {
+    const chats = await this.chatModel.find({ users: user, deletedAt: { $exists: false } }).populate('users owner createdBy', '-password');
 
     return chats.map((chat) => chat.toEntity());
   }

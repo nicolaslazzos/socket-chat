@@ -3,9 +3,9 @@ import { AuthGuard } from '@nestjs/passport';
 import { CreateMemberDto } from '../dtos/create-member.dto';
 import { MembersService } from '../services/members.service';
 import { Member, MemberRole } from '../entities/member.entity';
-import { Roles } from '../../common/role.decorator';
-import { RolesGuard } from '../../common/role.guard';
+import { Roles } from '../../common/roles.decorator';
 import { UpdateMemberDto } from '../dtos/update-member.dto';
+import { MembersRolesGuard } from '../members-roles.guard';
 
 @Controller('members')
 @UseGuards(AuthGuard())
@@ -14,35 +14,35 @@ export class MembersController {
 
   @Post()
   @Roles(MemberRole.ADMIN)
-  @UseGuards(RolesGuard)
+  @UseGuards(MembersRolesGuard)
   createMembers(@Body() { chat, members }: { chat: string; members: CreateMemberDto[]; }): Promise<Member[]> {
     return this.membersService.create(chat, members);
   }
 
   @Get()
   @Roles(MemberRole.MEMBER)
-  @UseGuards(RolesGuard)
+  @UseGuards(MembersRolesGuard)
   getMembers(@Query('chat') chat: string): Promise<Member[]> {
     return this.membersService.findByChat(chat);
   }
 
   @Get('/:member')
   @Roles(MemberRole.MEMBER)
-  @UseGuards(RolesGuard)
+  @UseGuards(MembersRolesGuard)
   getMember(@Param('member') member: string): Promise<Member> {
     return this.membersService.findById(member);
   }
 
   @Patch('/:member')
   @Roles(MemberRole.ADMIN)
-  @UseGuards(RolesGuard)
+  @UseGuards(MembersRolesGuard)
   updateMember(@Param('member') member: string, @Body() dto: UpdateMemberDto): Promise<Member> {
     return this.membersService.updateById(member, dto);
   }
 
   @Delete('/:member')
   @Roles(MemberRole.ADMIN)
-  @UseGuards(RolesGuard)
+  @UseGuards(MembersRolesGuard)
   deleteMember(@Param('member') member: string): Promise<Member> {
     return this.membersService.deleteById(member);
   }
