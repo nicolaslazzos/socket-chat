@@ -1,13 +1,13 @@
 import { Test } from '@nestjs/testing';
 import { PassportModule } from '@nestjs/passport';
-import { MembersService } from '../../members/services/members.service';
-import { userStub } from '../../auth/test/user.stub';
-import { MemberRole, MemberStatus } from '../../members/entities/member.entity';
+import { MembersService } from '../../../members/services/members.service';
+import { userStub } from '../../../auth/test/user.stub';
+import { MemberRole, MemberStatus } from '../../../members/entities/member.entity';
 import { MembersController } from './members.controller';
-import { MessagesService } from '../../messages/services/messages.service';
-import { AuthStrategy } from '../../auth/constants';
-import { memberStub } from '../test/member.stub';
-import { CreateMemberDto } from '../dtos/create-member.dto';
+import { MessagesService } from '../../../messages/services/messages.service';
+import { AuthStrategy } from '../../../auth/constants';
+import { memberStub } from '../../../members/test/member.stub';
+import { CreateMemberDto } from '../../../members/dtos/create-member.dto';
 
 // jest.mock('../services/chats.service');
 jest.mock('../services/members.service');

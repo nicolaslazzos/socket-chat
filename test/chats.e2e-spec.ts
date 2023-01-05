@@ -13,7 +13,7 @@ import { Chat, ChatStatus, ChatType } from '../src/chats/entities/chat.entity';
 import { AuthService } from '../src/auth/services/auth.service';
 import { userStub } from '../src/auth/test/user.stub';
 import { User } from '../src/auth/entities/user.entity';
-import { MemberRole } from '../src/members/entities/member.entity';
+import { MemberRole } from '../src/chats/entities/member.entity';
 import { UpdateChatDto } from '../src/chats/dtos/update-chat.dto';
 
 describe('Chats', () => {

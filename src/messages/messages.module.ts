@@ -6,11 +6,11 @@ import { MessageMongoRepository } from './repositories/message.mongo.repository'
 import { MongooseModule } from '@nestjs/mongoose';
 import { MessageModel } from './models/message.model';
 import { AuthModule } from '../auth/auth.module';
-import { MembersModule } from '../members/members.module';
 import { MessagesService } from './services/messages.service';
+import { ChatsModule } from '../chats/chats.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([MessageModel]), AuthModule, MembersModule],
+  imports: [MongooseModule.forFeature([MessageModel]), AuthModule, ChatsModule],
   providers: [{ provide: MessageRepository.name, useClass: MessageMongoRepository }, MessagesGateway, MessagesService],
   controllers: [MessagesController],
   exports: [MessagesService]

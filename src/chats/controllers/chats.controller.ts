@@ -6,7 +6,7 @@ import { CreateChatDto } from '../dtos/create-chat.dto';
 import { Chat } from '../entities/chat.entity';
 import { ChatsService } from '../services/chats.service';
 import { Roles } from '../../common/decorators/roles.decorator';
-import { MemberRole } from '../../members/entities/member.entity';
+import { MemberRole } from '../entities/member.entity';
 import { UpdateChatDto } from '../dtos/update-chat.dto';
 import { ChatsRolesGuard } from '../chats-roles.guard';
 

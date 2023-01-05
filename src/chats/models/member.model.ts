@@ -2,7 +2,7 @@ import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 import { Member as MemberEntity, MemberRole } from '../entities/member.entity';
 import { User } from '../../auth/models/user.model';
-import { Chat } from '../../chats/models/chat.model';
+import { Chat } from './chat.model';
 
 @Schema({ timestamps: true })
 export class Member extends Document {

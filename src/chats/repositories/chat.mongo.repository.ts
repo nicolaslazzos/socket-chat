@@ -45,4 +45,10 @@ export class ChatMongoRepository extends ChatRepository {
 
     return chat ? chat.toEntity() : null;
   }
+
+  async addUsersById(id: string, users: string[]): Promise<Chat> {
+    const chat = await this.chatModel.findOneAndUpdate({ _id: id, deletedAt: { $exists: false } }, { $push: { users: { $each: users } } }, { new: true });
+
+    return chat ? chat.toEntity() : null;
+  }
 }

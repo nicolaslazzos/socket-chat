@@ -1,7 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Socket } from 'socket.io';
-import { MemberRole } from '../../members/entities/member.entity';
+import { MemberRole } from '../../chats/entities/member.entity';
 import { ROLES_KEY, ROLES_VALUES } from '../decorators/roles.decorator';
 
 @Injectable()

@@ -1,8 +1,8 @@
 import { Test } from '@nestjs/testing';
 import { PassportModule } from '@nestjs/passport';
-import { MembersService } from '../../members/services/members.service';
+import { MembersService } from '../services/members.service';
 import { userStub } from '../../auth/test/user.stub';
-import { MemberRole } from '../../members/entities/member.entity';
+import { MemberRole } from '../entities/member.entity';
 import { CreateChatDto } from '../dtos/create-chat.dto';
 import { ChatType } from '../entities/chat.entity';
 import { ChatsService } from '../services/chats.service';

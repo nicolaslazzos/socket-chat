@@ -8,4 +8,5 @@ export abstract class ChatRepository {
   public abstract findByUser(user: string): Promise<Chat[]>;
   public abstract findByTypeAndUsers(type: ChatType, users: string[]): Promise<Chat[]>;
   public abstract updateById(id: string, dto: UpdateChatDto): Promise<Chat>;
+  public abstract addUsersById(id: string, users: string[]): Promise<Chat>;
 }

@@ -1,6 +1,6 @@
 import { CreateMemberDto } from '../dtos/create-member.dto';
-import { UpdateMemberDto } from '../dtos/update-member.dto';
-import { Member } from '../entities/member.entity';
+import { UpdateMemberDto } from '../../chats/dtos/update-member.dto';
+import { Member } from '../../chats/entities/member.entity';
 
 export abstract class MemberRepository {
   public abstract create(dto: CreateMemberDto): Promise<Member>;

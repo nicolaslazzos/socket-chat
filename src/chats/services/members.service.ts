@@ -2,22 +2,31 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '../../auth/entities/user.entity';
 import { CreateMemberDto } from '../dtos/create-member.dto';
 import { UpdateMemberDto } from '../dtos/update-member.dto';
-import { Member } from '../entities/member.entity';
+import { Member, MemberRole } from '../entities/member.entity';
 import { MemberRepository } from '../repositories/member.repository';
+import { ChatRepository } from '../repositories/chat.repository';
 
 @Injectable()
 export class MembersService {
   constructor(
     @Inject(MemberRepository.name)
-    private readonly membersRepository: MemberRepository
+    private readonly membersRepository: MemberRepository,
+    @Inject(ChatRepository.name)
+    private readonly chatsRepository: ChatRepository,
   ) { }
 
-  public async create(chat: string, members: CreateMemberDto[]): Promise<Member[]> {
-    const exists = await this.findByChatAndUsers(chat, members.map(m => m.user));
+  public async create(chatId: string, members: CreateMemberDto[]): Promise<Member[]> {
+    const chat = await this.chatsRepository.findById(chatId);
 
-    const users = exists.map(m => (m.user as User).id);
+    if (!chat) throw new NotFoundException();
 
-    members = members.filter(m => !users.includes(m.user)).map(m => ({ ...m, chat }));
+    const users = (chat.users as User[]).map(user => user.id);
+
+    members = members.filter(m => !users.includes(m.user)).map(m => {
+      return { ...m, role: m.role ?? MemberRole.MEMBER, chat: chat.id };
+    });
+
+    await this.chatsRepository.addUsersById(chat.id, members.map(m => m.user));
 
     return this.membersRepository.createMany(members);
   }

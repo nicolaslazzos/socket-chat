@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { MemberRole } from '../members/entities/member.entity';
-import { MembersService } from '../members/services/members.service';
+import { MemberRole } from './entities/member.entity';
+import { MembersService } from './services/members.service';
 import { User } from '../auth/entities/user.entity';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { ChatsService } from './services/chats.service';
+import { ChatType } from './entities/chat.entity';
 
 @Injectable()
 export class ChatsRolesGuard extends RolesGuard {
@@ -16,14 +17,22 @@ export class ChatsRolesGuard extends RolesGuard {
     super(reflector);
   }
 
-  async getMemberRole({ userId, chatId }): Promise<MemberRole> {
-    if (!chatId) return null;
+  async getMemberRole({ userId, chatId, memberId }): Promise<MemberRole> {
+    if (!chatId && !memberId) return null;
 
-    const target = await this.chatsService.findById(chatId);
+    if (memberId) {
+      const member = await this.membersService.findById(memberId);
 
-    if ((target?.owner as User)?.id === userId) return MemberRole.OWNER;
+      if ((member?.user as User)?.id === userId) return MemberRole.OWNER;
 
-    const member = await this.membersService.findByChatAndUser(target.id as string, userId);
+      chatId = member?.chat as string;
+    }
+
+    const chat = await this.chatsService.findById(chatId);
+
+    if ((chat?.owner as User)?.id === userId && chat.type !== ChatType.DIRECT) return MemberRole.OWNER;
+
+    const member = await this.membersService.findByChatAndUser(chatId, userId);
 
     return member?.role ?? null;
   }

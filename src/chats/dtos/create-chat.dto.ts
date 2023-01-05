@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { ArrayNotEmpty, IsEnum, IsString, IsOptional, ValidateNested } from 'class-validator';
 import { ChatType } from '../entities/chat.entity';
-import { CreateMemberDto } from '../../members/dtos/create-member.dto';
+import { CreateMemberDto } from './create-member.dto';
 
 export class CreateChatDto {
   @IsString()
@@ -12,10 +12,15 @@ export class CreateChatDto {
   @IsString()
   name?: string;
 
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => CreateMemberDto)
+  members: CreateMemberDto[];
+
   @IsOptional()
   @ArrayNotEmpty()
   @IsString({ each: true })
-  users: string[];
+  users?: string[];
 
   @IsOptional()
   @IsString()

@@ -1,5 +1,5 @@
 import { User } from "../../auth/entities/user.entity";
-import { Chat } from '../../chats/entities/chat.entity';
+import { Chat } from './chat.entity';
 
 export enum MemberRole {
   OWNER = 'owner',

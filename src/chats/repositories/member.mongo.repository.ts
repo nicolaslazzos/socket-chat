@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { MemberRepository } from './member.repository';
-import { Member as MemberModel } from '../../members/models/member.model';
-import { CreateMemberDto } from '../../members/dtos/create-member.dto';
-import { Member } from '../../members/entities/member.entity';
-import { UpdateMemberDto } from '../dtos/update-member.dto';
+import { Member as MemberModel } from '../../chats/models/member.model';
+import { CreateMemberDto } from '../dtos/create-member.dto';
+import { Member } from '../../chats/entities/member.entity';
+import { UpdateMemberDto } from '../../chats/dtos/update-member.dto';
 
 @Injectable()
 export class MemberMongoRepository extends MemberRepository {

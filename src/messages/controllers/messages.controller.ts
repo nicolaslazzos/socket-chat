@@ -3,7 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { User } from '../../auth/entities/user.entity';
 import { GetUser } from '../../auth/get-user.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
-import { MemberRole } from '../../members/entities/member.entity';
+import { MemberRole } from '../../chats/entities/member.entity';
 import { CreateMessageDto } from '../dtos/create-message.dto';
 import { UpdateMessageDto } from '../dtos/update-message.dto';
 import { Message } from '../entities/message.entity';

@@ -1,7 +1,7 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { MemberRole } from '../../members/entities/member.entity';
-import { MembersService } from '../../members/services/members.service';
+import { MemberRole } from '../entities/member.entity';
+import { MembersService } from './members.service';
 import { CreateChatDto } from '../dtos/create-chat.dto';
 import { ChatType } from '../entities/chat.entity';
 import { ChatRepository } from '../repositories/chat.repository';
