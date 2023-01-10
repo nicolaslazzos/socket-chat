@@ -31,8 +31,10 @@ describe('ChatMongoRepository', () => {
       const dto: CreateChatDto = {
         type: chat.type,
         name: chat.name,
-        creator: chat.creator as string,
-        members: []
+        owner: chat.owner as string,
+        createdBy: chat.createdBy as string,
+        users: chat.users as string[],
+        members: [],
       };
 
       const result = await chatRepository.create(dto);
@@ -51,11 +53,21 @@ describe('ChatMongoRepository', () => {
     });
   });
 
-  describe('findByIds', () => {
-    it('should return the chat with the specified ids', async () => {
+  describe('findByUser', () => {
+    it('should return the list of chats with the specified user', async () => {
       const chat = chatStub();
 
-      const result = await chatRepository.findByIds([chat.id]);
+      const result = await chatRepository.findByUser(chat.owner as string);
+
+      expect(result).toEqual([chat]);
+    });
+  });
+
+  describe('findByTypeAndUsers', () => {
+    it('should return the list of chats with the specified type and users', async () => {
+      const chat = chatStub();
+
+      const result = await chatRepository.findByTypeAndUsers(chat.type, chat.users as string[]);
 
       expect(result).toEqual([chat]);
     });
@@ -66,6 +78,26 @@ describe('ChatMongoRepository', () => {
       const chat = chatStub();
 
       const result = await chatRepository.updateById(chat.id, { name: 'new_name' });
+
+      expect(result).toEqual(chat);
+    });
+  });
+
+  describe('addUsersById', () => {
+    it('should add the users to the chat with the specified id and return it', async () => {
+      const chat = chatStub();
+
+      const result = await chatRepository.addUsersById(chat.id, ['another_user_id']);
+
+      expect(result).toEqual(chat);
+    });
+  });
+
+  describe('removeUsersById', () => {
+    it('should remove the users from the chat with the specified id and return it', async () => {
+      const chat = chatStub();
+
+      const result = await chatRepository.removeUsersById(chat.id, ['another_user_id']);
 
       expect(result).toEqual(chat);
     });

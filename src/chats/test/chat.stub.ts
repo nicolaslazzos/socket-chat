@@ -7,6 +7,7 @@ export const chatStub = (): Chat => {
     name: `some_name`,
     owner: `some_user_id`,
     createdBy: `some_user_id`,
+    users: [`some_user_id`, `other_user_id`],
     updatedAt: new Date('2022-12-23').toISOString(),
     createdAt: new Date('2022-12-23').toISOString()
   });
