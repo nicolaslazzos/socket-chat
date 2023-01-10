@@ -51,4 +51,10 @@ export class ChatMongoRepository extends ChatRepository {
 
     return chat ? chat.toEntity() : null;
   }
+
+  async removeUsersById(id: string, users: string[]): Promise<Chat> {
+    const chat = await this.chatModel.findOneAndUpdate({ _id: id, deletedAt: { $exists: false } }, { $pullAll: { users } }, { new: true });
+
+    return chat ? chat.toEntity() : null;
+  }
 }

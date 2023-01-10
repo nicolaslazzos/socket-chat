@@ -1,6 +1,5 @@
 import { Injectable, Inject, BadRequestException, NotFoundException, ConflictException } from '@nestjs/common';
 import { CreateChatDto } from '../dtos/create-chat.dto';
-import { CreateMemberDto } from '../dtos/create-member.dto';
 import { Chat, ChatType } from '../entities/chat.entity';
 import { MemberRole } from '../entities/member.entity';
 import { ChatRepository } from '../repositories/chat.repository';
@@ -22,39 +21,24 @@ export class ChatsService {
 
     const users = Array.from(new Set([...dto.members.map(m => m.user)]));
 
+    dto = { ...dto, users, owner: dto.createdBy };
+
     if (dto.type === ChatType.DIRECT) {
-      return this.createDirect({ type: dto.type, members: dto.members, users });
+      if (dto.users.length !== 2) throw new BadRequestException();
+
+      const exists = await this.findDirectChats(dto.users);
+
+      if (exists?.length) throw new ConflictException();
+
+      delete dto.createdBy;
+      delete dto.owner;
     }
-
-    const chat = await this.chatRepository.create({ ...dto, owner: dto.createdBy });
-
-    const members: CreateMemberDto[] = users.map((user) => {
-      const m = dto.members.find(m => m.user === user);
-
-      return { ...m, role: m.role ?? MemberRole.MEMBER, chat: chat.id, createdBy: dto.createdBy };
-    });
-
-    await this.membersService.create(chat.id, members);
-
-    return this.findById(chat.id);
-  }
-
-  async createDirect(dto: CreateChatDto): Promise<Chat> {
-    if (dto.users.length !== 2) throw new BadRequestException();
-
-    const exists = await this.findDirectChats(dto.users);
-
-    if (exists?.length) throw new ConflictException();
 
     const chat = await this.chatRepository.create(dto);
 
-    const members: CreateMemberDto[] = dto.members.map((m) => {
-      return { ...m, role: MemberRole.ADMIN, chat: chat.id };
-    });
+    await this.membersService.create(chat.id, dto.members);
 
-    await this.membersService.create(chat.id, members);
-
-    return chat;
+    return this.findById(chat.id);
   }
 
   async findDirectChats(users: string[]): Promise<Chat[]> {

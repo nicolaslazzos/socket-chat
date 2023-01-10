@@ -5,6 +5,7 @@ import { UpdateMemberDto } from '../dtos/update-member.dto';
 import { Member, MemberRole } from '../entities/member.entity';
 import { MemberRepository } from '../repositories/member.repository';
 import { ChatRepository } from '../repositories/chat.repository';
+import { ChatType } from '../entities/chat.entity';
 
 @Injectable()
 export class MembersService {
@@ -23,7 +24,16 @@ export class MembersService {
     const users = (chat.users as User[]).map(user => user.id);
 
     members = members.filter(m => !users.includes(m.user)).map(m => {
-      return { ...m, role: m.role ?? MemberRole.MEMBER, chat: chat.id };
+      const member = { ...m, chat: chat.id };
+
+      const direct = chat.type === ChatType.DIRECT;
+      const createdBy = (chat.createdBy as User)?.id;
+
+      member.role = m.user === createdBy || direct ? MemberRole.ADMIN : m.role ?? MemberRole.MEMBER;
+
+      if (!direct) member.createdBy = createdBy;
+
+      return member;
     });
 
     await this.chatsRepository.addUsersById(chat.id, members.map(m => m.user));
@@ -68,6 +78,10 @@ export class MembersService {
   }
 
   public async deleteById(id: string, dto: UpdateMemberDto = {}): Promise<Member> {
-    return this.updateById(id, { ...dto, deletedAt: new Date() });
+    const member = await this.updateById(id, { ...dto, deletedAt: new Date() });
+
+    await this.chatsRepository.removeUsersById(member.chat as string, [member.user as string]);
+
+    return member;
   }
 }
