@@ -5,7 +5,7 @@ import { userStub } from '../test/user.stub';
 import { UserRepository } from './user.repository';
 import { UserMongoRepository } from './user.mongo.repository';
 import { User as UserModel } from '../models/user.model';
-import { ModelMock } from '../../database/test/model.mock';
+import { ModelMock } from '../../common/test/model.mock';
 
 jest.mock('../models/user.model');
 
