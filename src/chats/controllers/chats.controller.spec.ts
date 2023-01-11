@@ -10,13 +10,15 @@ import { chatStub } from '../test/chat.stub';
 import { ChatsController } from './chats.controller';
 import { MessagesService } from '../../messages/services/messages.service';
 import { AuthStrategy } from '../../auth/constants';
+import { UpdateChatDto } from '../dtos/update-chat.dto';
 
 jest.mock('../services/chats.service');
-jest.mock('../../members/services/members.service');
+jest.mock('../services/members.service');
 jest.mock('../../messages/services/messages.service');
 
 describe('ChatsController', () => {
   let chatsController: ChatsController;
+  let chatsService: ChatsService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -27,6 +29,7 @@ describe('ChatsController', () => {
     }).compile();
 
     chatsController = moduleRef.get<ChatsController>(ChatsController);
+    chatsService = moduleRef.get<ChatsService>(ChatsService);
 
     jest.clearAllMocks();
   });
@@ -39,7 +42,6 @@ describe('ChatsController', () => {
       const dto: CreateChatDto = {
         type: ChatType.PRIVATE,
         name: 'some_name',
-        creator: user.id,
         members: [
           { user: user.id, role: MemberRole.ADMIN },
           { user: 'some_user_id', role: MemberRole.MEMBER }
@@ -49,6 +51,7 @@ describe('ChatsController', () => {
       const result = await chatsController.createChat(dto, user);
 
       expect(result).toEqual(chat);
+      expect(chatsService.create).toHaveBeenCalled();
     });
   });
 
@@ -60,6 +63,7 @@ describe('ChatsController', () => {
       const result = await chatsController.getChats(user);
 
       expect(result).toEqual([chat]);
+      expect(chatsService.findByUser).toHaveBeenCalledWith(user.id);
     });
   });
 
@@ -67,9 +71,10 @@ describe('ChatsController', () => {
     it('should return the chat with the specified id', async () => {
       const chat = chatStub();
 
-      const result = await chatsController.getChat('some_id');
+      const result = await chatsController.getChat(chat.id);
 
       expect(result).toEqual(chat);
+      expect(chatsService.findById).toHaveBeenCalledWith(chat.id);
     });
   });
 
@@ -77,19 +82,24 @@ describe('ChatsController', () => {
     it('should return the updated chat with the specified id', async () => {
       const chat = chatStub();
 
-      const result = await chatsController.updateChat(chat.id, { name: 'new_name' });
+      const dto: UpdateChatDto = { name: 'new_name' };
+
+      const result = await chatsController.updateChat(chat.id, dto);
 
       expect(result).toEqual(chat);
+      expect(chatsService.updateById).toHaveBeenCalledWith(chat.id, dto);
     });
   });
 
   describe('deleteChat', () => {
     it('should return the chat with the specified id marked as deleted', async () => {
       const chat = chatStub();
+      const user = userStub();
 
-      const result = await chatsController.deleteChat(chat.id);
+      const result = await chatsController.deleteChat(chat.id, user);
 
       expect(result).toEqual(chat);
+      expect(chatsService.deleteById).toHaveBeenCalled();
     });
   });
 });
