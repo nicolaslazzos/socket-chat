@@ -21,10 +21,10 @@ export class ChatsService {
 
     const users = Array.from(new Set([...dto.members.map(m => m.user)]));
 
-    dto = { ...dto, users, owner: dto.createdBy };
+    dto = { ...dto, owner: dto.createdBy };
 
     if (dto.type === ChatType.DIRECT) {
-      if (dto.users.length !== 2) throw new BadRequestException();
+      if (users.length !== 2) throw new BadRequestException();
 
       const exists = await this.chatRepository.findByTypeAndUsers(ChatType.DIRECT, users);
 

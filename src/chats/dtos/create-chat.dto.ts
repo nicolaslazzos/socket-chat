@@ -18,11 +18,6 @@ export class CreateChatDto {
   members: CreateMemberDto[];
 
   @IsOptional()
-  @ArrayNotEmpty()
-  @IsString({ each: true })
-  users?: string[];
-
-  @IsOptional()
   @IsString()
   owner?: string;
 

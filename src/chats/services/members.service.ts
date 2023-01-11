@@ -23,17 +23,18 @@ export class MembersService {
 
     const users = (chat.users as User[]).map(user => user.id);
 
-    members = members.filter(m => !users.includes(m.user)).map(m => {
-      const member = { ...m, chat: chat.id };
+    const unique = Array.from(new Set(members.map(m => m.user)));
 
+    members = unique.filter(u => !users.includes(u)).map(u => {
+      const member = members.find(m => m.user === u);
       const direct = chat.type === ChatType.DIRECT;
-      const createdBy = (chat.createdBy as User)?.id;
+      const creator = (chat.createdBy as User)?.id;
 
-      member.role = m.user === createdBy || direct ? MemberRole.ADMIN : m.role ?? MemberRole.MEMBER;
+      member.role = member.user === creator || direct ? MemberRole.ADMIN : member.role ?? MemberRole.MEMBER;
 
-      if (!direct) member.createdBy = createdBy;
+      if (!direct) member.createdBy = creator;
 
-      return member;
+      return { ...member, chat: chat.id };
     });
 
     await this.chatsRepository.addUsersById(chat.id, members.map(m => m.user));

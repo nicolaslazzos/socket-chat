@@ -9,7 +9,7 @@ import { Types } from 'mongoose';
 import { configValidationSchema } from '../src/config.schema';
 import { ChatsModule } from '../src/chats/chats.module';
 import { CreateChatDto } from '../src/chats/dtos/create-chat.dto';
-import { Chat, ChatStatus, ChatType } from '../src/chats/entities/chat.entity';
+import { Chat, ChatType } from '../src/chats/entities/chat.entity';
 import { AuthService } from '../src/auth/services/auth.service';
 import { userStub } from '../src/auth/test/user.stub';
 import { User } from '../src/auth/entities/user.entity';
@@ -20,7 +20,7 @@ describe('Chats', () => {
   let mongod: MongoMemoryServer;
   let app: INestApplication;
   let authService: AuthService;
-  let users: User[];
+  let users: { user: User, authorization: string; }[];
   let user: User;
   let chat: Chat;
   let authorization: string;
@@ -50,17 +50,22 @@ describe('Chats', () => {
     // initialize at least two users
     authService = app.get<AuthService>(AuthService);
 
-    const { username, password } = userStub({ name: 'some' });
+    users = await Promise.all([
+      userStub({ name: 'some' }),
+      userStub({ name: 'other' }),
+      userStub({ name: 'another' })
+    ].map(({ username, password }) => {
+      return new Promise<{ user: User, authorization: string; }>(async (resolve) => {
+        const user = await authService.signUp({ username, password });
 
-    users = [userStub({ name: 'some' }), userStub({ name: 'other' }), userStub({ name: 'another' })];
+        const { access_token } = await authService.signIn({ username, password });
 
-    users = await Promise.all(users.map(({ username, password }) => authService.signUp({ username, password })));
+        resolve({ user, authorization: `Bearer ${access_token}` });
+      });
+    }));
 
-    user = users[0];
-
-    const { access_token } = await authService.signIn({ username, password });
-
-    authorization = `Bearer ${access_token}`;
+    user = users[0].user;
+    authorization = users[0].authorization;
 
     // init app
     await app.init();
@@ -70,8 +75,8 @@ describe('Chats', () => {
     describe(`when sending a valid body`, () => {
       it(`should return the created chat`, async () => {
         const dto: CreateChatDto = {
-          type: ChatType.DIRECT,
-          members: [...users].splice(0, 2).map((user) => ({ user: user.id, role: MemberRole.MEMBER }))
+          type: ChatType.PUBLIC,
+          members: [...users].splice(0, 2).map(({ user }) => ({ user: user.id, role: MemberRole.MEMBER }))
         };
 
         return request(app.getHttpServer())
@@ -82,9 +87,44 @@ describe('Chats', () => {
           .expect(({ body }) => {
             chat = body;
             expect(body.id).toBeDefined();
-            expect(body.creator).toEqual(user.id);
             expect(body.type).toEqual(dto.type);
+            expect(body.users.map((u: User) => u.id)).toEqual(dto.members.map(m => m.user));
           });
+      });
+    });
+
+    describe(`when sending a valid body with type direct`, () => {
+      it(`should return the created chat`, async () => {
+        const dto: CreateChatDto = {
+          type: ChatType.DIRECT,
+          members: [...users].splice(0, 2).map(({ user }) => ({ user: user.id, role: MemberRole.MEMBER }))
+        };
+
+        return request(app.getHttpServer())
+          .post('/chats')
+          .set('Authorization', authorization)
+          .send(dto)
+          .expect(HttpStatus.CREATED)
+          .expect(({ body }) => {
+            expect(body.id).toBeDefined();
+            expect(body.type).toEqual(dto.type);
+            expect(body.users.map((u: User) => u.id)).toEqual(dto.members.map(m => m.user));
+          });
+      });
+    });
+
+    describe(`when sending an body with type direct and it already exists`, () => {
+      it(`should throw a conflict exception`, async () => {
+        const dto: CreateChatDto = {
+          type: ChatType.DIRECT,
+          members: [...users].splice(0, 2).map(({ user }) => ({ user: user.id, role: MemberRole.MEMBER }))
+        };
+
+        return request(app.getHttpServer())
+          .post('/chats')
+          .set('Authorization', authorization)
+          .send(dto)
+          .expect(HttpStatus.CONFLICT);
       });
     });
 
@@ -92,7 +132,7 @@ describe('Chats', () => {
       it(`should throw a bad request exception`, async () => {
         const dto: CreateChatDto = {
           type: ChatType.DIRECT,
-          members: [...users].map((user) => ({ user: user.id, role: MemberRole.MEMBER }))
+          members: [...users].map(({ user }) => ({ user: user.id, role: MemberRole.MEMBER }))
         };
 
         return request(app.getHttpServer())
@@ -113,6 +153,20 @@ describe('Chats', () => {
           .expect(HttpStatus.OK)
           .expect(({ body }) => {
             expect(body?.length > 0).toBeTruthy();
+          });
+      });
+    });
+
+    describe(`when the user is not a member of any chat`, () => {
+      it(`should return an empty list`, async () => {
+        const { authorization } = [...users].pop();
+
+        return request(app.getHttpServer())
+          .get('/chats')
+          .set('Authorization', authorization)
+          .expect(HttpStatus.OK)
+          .expect(({ body }) => {
+            expect(body?.length == 0).toBeTruthy();
           });
       });
     });
@@ -195,7 +249,8 @@ describe('Chats', () => {
           .expect(HttpStatus.OK)
           .expect(({ body }) => {
             expect(body.id).toEqual(chat.id);
-            expect(body.status).toEqual(ChatStatus.DELETED);
+            expect(body.deletedAt).toBeDefined();
+            expect(body.deletedBy).toEqual(user.id);
           });
       });
     });
