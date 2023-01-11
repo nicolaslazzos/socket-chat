@@ -26,7 +26,7 @@ export class ChatsService {
     if (dto.type === ChatType.DIRECT) {
       if (dto.users.length !== 2) throw new BadRequestException();
 
-      const exists = await this.findDirectChats(dto.users);
+      const exists = await this.chatRepository.findByTypeAndUsers(ChatType.DIRECT, users);
 
       if (exists?.length) throw new ConflictException();
 
@@ -39,10 +39,6 @@ export class ChatsService {
     await this.membersService.create(chat.id, dto.members);
 
     return this.findById(chat.id);
-  }
-
-  async findDirectChats(users: string[]): Promise<Chat[]> {
-    return this.chatRepository.findByTypeAndUsers(ChatType.DIRECT, users);
   }
 
   async findById(id: string): Promise<Chat> {
