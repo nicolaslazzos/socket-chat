@@ -5,7 +5,7 @@ import { MemberRepository } from './member.repository';
 import { MemberMongoRepository } from './member.mongo.repository';
 import { Member as MemberModel } from '../models/member.model';
 import { CreateMemberDto } from '../dtos/create-member.dto';
-import { MemberRole, MemberStatus } from '../entities/member.entity';
+import { MemberRole } from '../entities/member.entity';
 
 jest.mock('../models/member.model');
 
@@ -32,7 +32,8 @@ describe('MmebersMongoRepository', () => {
       const dto: CreateMemberDto = {
         role: MemberRole.MEMBER,
         chat: 'some_chat_id',
-        user: 'some_user_id'
+        user: 'some_user_id',
+        createdBy: 'some_user_id'
       };
 
       const result = await memberRepository.create(dto);
@@ -48,7 +49,8 @@ describe('MmebersMongoRepository', () => {
       const dto: CreateMemberDto = {
         role: MemberRole.MEMBER,
         chat: 'some_chat_id',
-        user: 'some_user_id'
+        user: 'some_user_id',
+        createdBy: 'some_user_id'
       };
 
       const result = await memberRepository.createMany([dto]);
@@ -111,7 +113,7 @@ describe('MmebersMongoRepository', () => {
     it('should update and return the member with the specified id', async () => {
       const member = memberStub();
 
-      const result = await memberRepository.updateById(member.id, { status: MemberStatus.MUTED });
+      const result = await memberRepository.updateById(member.id, { role: MemberRole.ADMIN });
 
       expect(result).toEqual(member);
     });
