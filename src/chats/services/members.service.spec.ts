@@ -1,27 +1,33 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { MemberRole, MemberStatus } from '../../chats/entities/member.entity';
+import { MemberRole } from '../../chats/entities/member.entity';
 import { MembersService } from './members.service';
 import { CreateMemberDto } from '../dtos/create-member.dto';
 import { MemberRepository } from '../repositories/member.repository';
+import { ChatRepository } from '../repositories/chat.repository';
 import { memberStub } from '../test/member.stub';
+import { UpdateMemberDto } from '../dtos/update-member.dto';
 
 jest.mock('../repositories/member.repository');
+jest.mock('../repositories/chat.repository');
 
 describe('MembersService', () => {
   let membersService: MembersService;
   let memberRepository: MemberRepository;
+  let chatRepository: ChatRepository;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         MembersService,
         { provide: MemberRepository.name, useClass: MemberRepository as any },
+        { provide: ChatRepository.name, useClass: ChatRepository as any },
       ],
     }).compile();
 
     membersService = moduleRef.get<MembersService>(MembersService);
     memberRepository = moduleRef.get<MemberRepository>(MemberRepository.name);
+    chatRepository = moduleRef.get<ChatRepository>(ChatRepository.name);
 
     jest.clearAllMocks();
   });
@@ -31,11 +37,31 @@ describe('MembersService', () => {
       it('should return the members created by the repository', async () => {
         const member = memberStub();
 
-        const dto: CreateMemberDto = { role: MemberRole.MEMBER, user: 'some_user_id' };
+        const chat = member.chat as string;
+        const dto: CreateMemberDto[] = [{ role: MemberRole.MEMBER, user: 'some_user_id' }];
 
-        const result = await membersService.create('some_chat_id', [dto]);
+        const result = await membersService.create(chat, dto);
 
         expect(result).toEqual([member]);
+        expect(chatRepository.findById).toHaveBeenCalledWith(chat);
+        expect(chatRepository.addUsersById).toHaveBeenCalledWith(chat, dto.map(u => u.user));
+        expect(memberRepository.createMany).toHaveBeenCalled();
+      });
+    });
+
+    describe('when sending a non-existing chat id and a valid dto', () => {
+      it('should throw a not found exception', async () => {
+        jest.spyOn(chatRepository, 'findById').mockResolvedValueOnce(null);
+
+        const chat = 'non_existing_chat_id';
+        const dto: CreateMemberDto[] = [{ role: MemberRole.MEMBER, user: 'some_user_id' }];
+
+        const promise = membersService.create(chat, dto);
+
+        expect(promise).rejects.toThrow(NotFoundException);
+        expect(chatRepository.findById).toHaveBeenCalledWith(chat);
+        expect(chatRepository.addUsersById).not.toHaveBeenCalled();
+        expect(memberRepository.createMany).not.toHaveBeenCalled();
       });
     });
   });
@@ -48,6 +74,7 @@ describe('MembersService', () => {
         const result = await membersService.findById(member.id);
 
         expect(result).toEqual(member);
+        expect(memberRepository.findById).toHaveBeenCalledWith(member.id);
       });
     });
 
@@ -60,6 +87,7 @@ describe('MembersService', () => {
         const promise = membersService.findById(member.id);
 
         expect(promise).rejects.toThrow(NotFoundException);
+        expect(memberRepository.findById).toHaveBeenCalledWith(member.id);
       });
     });
   });
@@ -69,9 +97,12 @@ describe('MembersService', () => {
       it('should return the list of members that belong to the specified chat', async () => {
         const member = memberStub();
 
-        const result = await membersService.findByChat('some_chat_id');
+        const chat = member.chat as string;
+
+        const result = await membersService.findByChat(chat);
 
         expect(result).toEqual([member]);
+        expect(memberRepository.findByChat).toHaveBeenCalledWith(chat);
       });
     });
   });
@@ -81,9 +112,12 @@ describe('MembersService', () => {
       it('should return the list of members that belong to the specified user', async () => {
         const member = memberStub();
 
-        const result = await membersService.findByUser('some_user_id');
+        const user = member.user as string;
+
+        const result = await membersService.findByUser(user);
 
         expect(result).toEqual([member]);
+        expect(memberRepository.findByUser).toHaveBeenCalledWith(user);
       });
     });
   });
@@ -93,9 +127,13 @@ describe('MembersService', () => {
       it('should return the member with the specified chat and user ids', async () => {
         const member = memberStub();
 
+        const chat = member.chat as string;
+        const user = member.user as string;
+
         const result = await membersService.findByChatAndUser('some_chat_id', 'some_user_id');
 
         expect(result).toEqual(member);
+        expect(memberRepository.findByChatAndUser).toHaveBeenCalledWith(chat, user);
       });
     });
 
@@ -103,9 +141,13 @@ describe('MembersService', () => {
       it('should throw a not found exception', async () => {
         jest.spyOn(memberRepository, 'findByChatAndUser').mockResolvedValueOnce(null);
 
-        const promise = membersService.findByChatAndUser('some_chat_id', 'non_existing_user_id');
+        const chat = 'some_chat_id';
+        const user = 'non_existing_user_id';
+
+        const promise = membersService.findByChatAndUser(chat, user);
 
         expect(promise).rejects.toThrow(NotFoundException);
+        expect(memberRepository.findByChatAndUser).toHaveBeenCalledWith(chat, user);
       });
     });
 
@@ -113,9 +155,13 @@ describe('MembersService', () => {
       it('should throw a not found exception', async () => {
         jest.spyOn(memberRepository, 'findByChatAndUser').mockResolvedValueOnce(null);
 
-        const promise = membersService.findByChatAndUser('non_existing_chat_id', 'some_user_id');
+        const chat = 'non_existing_chat_id';
+        const user = 'some_user_id';
+
+        const promise = membersService.findByChatAndUser(chat, user);
 
         expect(promise).rejects.toThrow(NotFoundException);
+        expect(memberRepository.findByChatAndUser).toHaveBeenCalledWith(chat, user);
       });
     });
   });
@@ -125,9 +171,13 @@ describe('MembersService', () => {
       it('should return the list of members of the specified chat with the specified users ids', async () => {
         const member = memberStub();
 
-        const result = await membersService.findByChatAndUsers('some_chat_id', ['some_user_id']);
+        const chat = member.chat as string;
+        const users = [member.user as string];
+
+        const result = await membersService.findByChatAndUsers(chat, users);
 
         expect(result).toEqual([member]);
+        expect(memberRepository.findByChatAndUsers).toHaveBeenCalledWith(chat, users);
       });
     });
   });
@@ -137,9 +187,12 @@ describe('MembersService', () => {
       it('should return the updated member with the specified id', async () => {
         const member = memberStub();
 
-        const result = await membersService.updateById(member.id, { status: MemberStatus.MUTED });
+        const dto: UpdateMemberDto = { role: MemberRole.ADMIN };
+
+        const result = await membersService.updateById(member.id, dto);
 
         expect(result).toEqual(member);
+        expect(memberRepository.updateById).toHaveBeenCalledWith(member.id, dto);
       });
     });
 
@@ -147,9 +200,13 @@ describe('MembersService', () => {
       it('should throw a not found exception', async () => {
         jest.spyOn(memberRepository, 'updateById').mockResolvedValueOnce(null);
 
-        const promise = membersService.updateById('non_existing_id', { status: MemberStatus.MUTED });
+        const member = 'non_existing_id';
+        const dto: UpdateMemberDto = { role: MemberRole.ADMIN };
+
+        const promise = membersService.updateById(member, dto);
 
         expect(promise).rejects.toThrow(NotFoundException);
+        expect(memberRepository.updateById).toHaveBeenCalledWith(member, dto);
       });
     });
   });
@@ -159,9 +216,14 @@ describe('MembersService', () => {
       it('should mark as deleted and return the member with the specified id', async () => {
         const member = memberStub();
 
+        const chat = member.chat as string;
+        const user = member.user as string;
+
         const result = await membersService.deleteById(member.id);
 
         expect(result).toEqual(member);
+        expect(memberRepository.updateById).toHaveBeenCalled();
+        expect(chatRepository.removeUsersById).toHaveBeenCalledWith(chat, [user]);
       });
     });
 
@@ -169,9 +231,13 @@ describe('MembersService', () => {
       it('should throw a not found exception', async () => {
         jest.spyOn(memberRepository, 'updateById').mockResolvedValueOnce(null);
 
-        const promise = membersService.deleteById('non_existing_id');
+        const member = 'non_existing_id';
+
+        const promise = membersService.deleteById(member);
 
         expect(promise).rejects.toThrow(NotFoundException);
+        expect(memberRepository.updateById).toHaveBeenCalled();
+        expect(chatRepository.removeUsersById).not.toHaveBeenCalled();
       });
     });
   });

@@ -34,10 +34,10 @@ export class MembersService {
 
       if (!direct) member.createdBy = creator;
 
-      return { ...member, chat: chat.id };
+      return { ...member, chat: chatId };
     });
 
-    await this.chatsRepository.addUsersById(chat.id, members.map(m => m.user));
+    await this.chatsRepository.addUsersById(chatId, members.map(m => m.user));
 
     return this.membersRepository.createMany(members);
   }
