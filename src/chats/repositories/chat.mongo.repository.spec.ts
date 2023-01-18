@@ -33,7 +33,6 @@ describe('ChatMongoRepository', () => {
         name: chat.name,
         owner: chat.owner as string,
         createdBy: chat.createdBy as string,
-        users: chat.users as string[],
         members: [],
       };
 
