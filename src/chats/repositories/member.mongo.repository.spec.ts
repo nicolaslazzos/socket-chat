@@ -9,7 +9,7 @@ import { MemberRole } from '../entities/member.entity';
 
 jest.mock('../models/member.model');
 
-describe('MmebersMongoRepository', () => {
+describe('MemberMongoRepository', () => {
   let memberRepository: MemberRepository;
 
   beforeEach(async () => {

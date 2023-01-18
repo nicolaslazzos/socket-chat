@@ -36,6 +36,6 @@ export class MessagesService {
   }
 
   public async deleteById(id: string, dto: UpdateMessageDto = {}): Promise<Message> {
-    return this.messagesRepository.updateById(id, { ...dto, deletedAt: new Date() });
+    return this.updateById(id, { ...dto, deletedAt: new Date() });
   }
 }

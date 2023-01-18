@@ -8,7 +8,7 @@ import { CreateMessageDto } from '../dtos/create-message.dto';
 
 jest.mock('../models/message.model');
 
-describe('ChatMongoRepository', () => {
+describe('MessageMongoRepository', () => {
   let messageRepository: MessageRepository;
 
   beforeEach(async () => {
