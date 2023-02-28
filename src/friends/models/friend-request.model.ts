@@ -1,21 +1,18 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema, Types } from 'mongoose';
-import { Chat as ChatEntity, ChatType } from '../entities/chat.entity';
+import { FriendRequest as FriendRequestEntity, FriendRequestStatus } from '../entities/friend-request.entity';
 import { User } from '../../auth/models/user.model';
 
 @Schema({ timestamps: true })
-export class Chat extends Document {
-  @Prop({ enum: ChatType, required: true })
-  type: ChatType;
+export class FriendRequest extends Document {
+  @Prop({ enum: FriendRequestStatus, default: FriendRequestStatus.CREATED })
+  status: FriendRequestStatus;
 
-  @Prop({ required: false })
-  name: string;
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: User.name, required: true })
+  sender: User;
 
-  @Prop({ type: [MongooseSchema.Types.ObjectId], ref: User.name, required: true })
-  users: User;
-
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: User.name, required: false })
-  owner: User;
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: User.name, required: true })
+  receiver: User;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: User.name, required: false })
   createdBy: User;
@@ -26,12 +23,12 @@ export class Chat extends Document {
   @Prop({ required: false })
   deletedAt: Date;
 
-  public toEntity: () => ChatEntity;
+  public toEntity: () => FriendRequestEntity;
 }
 
-const ChatSchema = SchemaFactory.createForClass(Chat);
+const FriendRequestSchema = SchemaFactory.createForClass(FriendRequest);
 
-ChatSchema.methods.toEntity = function (): ChatEntity {
+FriendRequestSchema.methods.toEntity = function (): FriendRequestEntity {
   let res = this.toJSON();
 
   const parse = (item: Types.ObjectId | Document & { toEntity: () => Object; }) => {
@@ -57,7 +54,7 @@ ChatSchema.methods.toEntity = function (): ChatEntity {
   delete res._id;
   delete res.__v;
 
-  return new ChatEntity(res);
+  return new FriendRequestEntity(res);
 };
 
-export const ChatModel = { name: Chat.name, schema: ChatSchema };
+export const FriendRequestModel = { name: FriendRequest.name, schema: FriendRequestSchema };

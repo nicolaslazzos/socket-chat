@@ -1,24 +1,12 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema, Types } from 'mongoose';
-import { Chat as ChatEntity, ChatType } from '../entities/chat.entity';
+import { Friend as FriendEntity } from '../entities/friend.entity';
 import { User } from '../../auth/models/user.model';
 
 @Schema({ timestamps: true })
-export class Chat extends Document {
-  @Prop({ enum: ChatType, required: true })
-  type: ChatType;
-
-  @Prop({ required: false })
-  name: string;
-
+export class Friend extends Document {
   @Prop({ type: [MongooseSchema.Types.ObjectId], ref: User.name, required: true })
   users: User;
-
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: User.name, required: false })
-  owner: User;
-
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: User.name, required: false })
-  createdBy: User;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: User.name, required: false })
   deletedBy: User;
@@ -26,12 +14,12 @@ export class Chat extends Document {
   @Prop({ required: false })
   deletedAt: Date;
 
-  public toEntity: () => ChatEntity;
+  public toEntity: () => FriendEntity;
 }
 
-const ChatSchema = SchemaFactory.createForClass(Chat);
+const FriendSchema = SchemaFactory.createForClass(Friend);
 
-ChatSchema.methods.toEntity = function (): ChatEntity {
+FriendSchema.methods.toEntity = function (): FriendEntity {
   let res = this.toJSON();
 
   const parse = (item: Types.ObjectId | Document & { toEntity: () => Object; }) => {
@@ -57,7 +45,7 @@ ChatSchema.methods.toEntity = function (): ChatEntity {
   delete res._id;
   delete res.__v;
 
-  return new ChatEntity(res);
+  return new FriendEntity(res);
 };
 
-export const ChatModel = { name: Chat.name, schema: ChatSchema };
+export const FriendModel = { name: Friend.name, schema: FriendSchema };

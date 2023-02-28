@@ -6,6 +6,7 @@ import { MessagesModule } from './messages/messages.module';
 import { AuthModule } from './auth/auth.module';
 import { configValidationSchema } from './config.schema';
 import { ChatsModule } from './chats/chats.module';
+import { FriendsModule } from './friends/friends.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { ChatsModule } from './chats/chats.module';
     }),
     AuthModule,
     MessagesModule,
-    ChatsModule
+    ChatsModule,
+    FriendsModule
   ]
 })
 export class AppModule { }
